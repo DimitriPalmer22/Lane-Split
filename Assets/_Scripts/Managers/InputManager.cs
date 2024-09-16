@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 
-public class InputManager : MonoBehaviour
+public class InputManager : MonoBehaviour, IDebugManaged
 {
     public static InputManager Instance { get; private set; }
     public PlayerControls PlayerControls { get; private set; }
@@ -25,8 +25,6 @@ public class InputManager : MonoBehaviour
 
     #endregion
 
-    [SerializeField] private TMP_Text debugText;
-
     private void Awake()
     {
         // Set the instance to this object if it is null
@@ -40,7 +38,35 @@ public class InputManager : MonoBehaviour
 
         // Create a new instance of the PlayerControls class
         PlayerControls = new PlayerControls();
+    }
 
+    // Start is called before the first frame update
+    private void Start()
+    {
+        // Initialize the input
+        InitializeInput();
+
+        // Add this item to the DebugManager
+        DebugManager.Instance.AddDebugItem(this);
+    }
+
+
+    private void OnEnable()
+    {
+        // Enable the PlayerControls
+        PlayerControls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        // Disable the PlayerControls
+        PlayerControls.Disable();
+    }
+
+    #region Input Functions
+
+    private void InitializeInput()
+    {
         PlayerControls.Gameplay.Press.started += StartSwipeDetection;
         PlayerControls.Gameplay.Press.canceled += EndSwipeDetection;
     }
@@ -73,45 +99,29 @@ public class InputManager : MonoBehaviour
 
         var normalizedDifference = difference.normalized;
         var differenceDistance = difference.magnitude;
-        
+
         // TODO: Implement a system for making some swipes invalid
-        
+
         // Set the swipe vector
         _swipe = difference;
 
         // TODO: Call an event to notify other classes that a swipe has been detected
-        
+
         // TODO: When registering swipes, use dot product to determine which direction a swipe is in
     }
 
-    private void OnEnable()
-    {
-        // Enable the PlayerControls
-        PlayerControls.Enable();
-    }
+    #endregion
 
-    private void OnDisable()
-    {
-        // Disable the PlayerControls
-        PlayerControls.Disable();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
 
     // Update is called once per frame
     void Update()
     {
-        UpdateDebugText();
     }
 
-    private void UpdateDebugText()
+    public string GetDebugText()
     {
-        debugText.text =
-            $"Is Swiping: {_isSwiping}\n" +
-            $"Touch Position: {_currentTouchPosition}\n" +
-            $"Swipe: {_swipe}";
+        return $"Is Swiping: {_isSwiping}\n" +
+               $"Touch Position: {_currentTouchPosition}\n" +
+               $"Swipe: {_swipe}\n";
     }
 }

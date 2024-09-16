@@ -53,6 +53,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Debug"",
+                    ""type"": ""Button"",
+                    ""id"": ""311c36d7-a8d4-443b-aaf8-a1fa8e796459"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -110,6 +119,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Position"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""da92af2c-8d0d-46c9-974f-06cbd3532056"",
+                    ""path"": ""<Keyboard>/f1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Debug"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -127,6 +147,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Gameplay_Swerve = m_Gameplay.FindAction("Swerve", throwIfNotFound: true);
         m_Gameplay_Press = m_Gameplay.FindAction("Press", throwIfNotFound: true);
         m_Gameplay_Position = m_Gameplay.FindAction("Position", throwIfNotFound: true);
+        m_Gameplay_Debug = m_Gameplay.FindAction("Debug", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -191,6 +212,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Swerve;
     private readonly InputAction m_Gameplay_Press;
     private readonly InputAction m_Gameplay_Position;
+    private readonly InputAction m_Gameplay_Debug;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -198,6 +220,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Swerve => m_Wrapper.m_Gameplay_Swerve;
         public InputAction @Press => m_Wrapper.m_Gameplay_Press;
         public InputAction @Position => m_Wrapper.m_Gameplay_Position;
+        public InputAction @Debug => m_Wrapper.m_Gameplay_Debug;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -216,6 +239,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Position.started += instance.OnPosition;
             @Position.performed += instance.OnPosition;
             @Position.canceled += instance.OnPosition;
+            @Debug.started += instance.OnDebug;
+            @Debug.performed += instance.OnDebug;
+            @Debug.canceled += instance.OnDebug;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -229,6 +255,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Position.started -= instance.OnPosition;
             @Position.performed -= instance.OnPosition;
             @Position.canceled -= instance.OnPosition;
+            @Debug.started -= instance.OnDebug;
+            @Debug.performed -= instance.OnDebug;
+            @Debug.canceled -= instance.OnDebug;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -260,5 +289,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSwerve(InputAction.CallbackContext context);
         void OnPress(InputAction.CallbackContext context);
         void OnPosition(InputAction.CallbackContext context);
+        void OnDebug(InputAction.CallbackContext context);
     }
 }
