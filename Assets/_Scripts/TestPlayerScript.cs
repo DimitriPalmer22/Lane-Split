@@ -9,8 +9,6 @@ public class TestPlayerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InputManager.Instance.PlayerControls.Gameplay.Swerve.performed += MoveCar;
-        Debug.Log("Start!");
     }
 
     // Update is called once per frame
@@ -21,12 +19,7 @@ public class TestPlayerScript : MonoBehaviour
 
     #region Input Functions
 
-    private void MoveCar(InputAction.CallbackContext ctx)
-    {
-        var value = ctx.ReadValue<float>();
-        
-        Debug.Log($"Swerve: {value}");
-    }
+
 
     #endregion
 }

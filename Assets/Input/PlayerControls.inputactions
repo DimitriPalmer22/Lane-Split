@@ -13,6 +13,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Press",
+                    "type": "Button",
+                    "id": "3538d23e-bb10-4108-b46a-f66695669304",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Position",
+                    "type": "Value",
+                    "id": "553970d9-9622-4015-9469-8f9043e5e2e5",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -30,7 +48,7 @@
                 {
                     "name": "negative",
                     "id": "20d29450-359c-4d37-abf1-3dafac1c7cf9",
-                    "path": "<Touchscreen>/delta/left",
+                    "path": "<Touchscreen>/primaryTouch/delta/left",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
@@ -48,6 +66,28 @@
                     "action": "Swerve",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "01dc3902-c88c-4c43-92cd-cc0d0803c314",
+                    "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Press",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eff08613-6e95-471a-9d73-d79965a56195",
+                    "path": "<Touchscreen>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
