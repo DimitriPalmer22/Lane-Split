@@ -8,22 +8,47 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 {
     [SerializeField] private float moveDistance = 10f;
 
-    private String debugString = "";
+    private String debugText = "";
     
     // Start is called before the first frame update
     void Start()
     {
         // Initialize the input
-        InputManager.Instance.onSwipe += OnSwipe;
+        InputManager.Instance.onSwipe += UpdateDebugTextOnSwipe;
+        InputManager.Instance.onSwipe += MoveOnSwipe;
         
         // Add this object to the debug manager
         DebugManager.Instance.AddDebugItem(this);
     }
 
+    private void MoveOnSwipe(Vector2 swipe, InputManager.SwipeDirection direction)
+    {
+        switch (direction)
+        {
+            case InputManager.SwipeDirection.Left:
+                transform.position += -transform.right * moveDistance;
+                break;
+
+            case InputManager.SwipeDirection.Right:
+                transform.position += transform.right * moveDistance;
+                break;
+            
+            case InputManager.SwipeDirection.Up:
+                transform.position += transform.forward * moveDistance;
+                break;
+            
+            case InputManager.SwipeDirection.Down:
+                transform.position += -transform.forward * moveDistance;
+                break;
+                
+        }
+    }
+
     private void OnDestroy()
     {
         // Remove this object from the debug manager
-        InputManager.Instance.onSwipe -= OnSwipe;
+        InputManager.Instance.onSwipe -= UpdateDebugTextOnSwipe;
+        InputManager.Instance.onSwipe -= MoveOnSwipe;
         
         // Remove this object from the debug manager
         DebugManager.Instance.RemoveDebugItem(this);
@@ -38,7 +63,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     #region Input Functions
 
-    private void OnSwipe(Vector2 obj, InputManager.SwipeDirection direction)
+    private void UpdateDebugTextOnSwipe(Vector2 obj, InputManager.SwipeDirection direction)
     {
         
         var up = Vector2.up;
@@ -59,7 +84,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         var downLeftDot = Vector2.Dot(obj.normalized, downLeft);
         var downRightDot = Vector2.Dot(obj.normalized, downRight);
         
-        debugString = $"Player Swipe Dots:\n" +
+        debugText = $"Player Swipe Dots:\n" +
                       $"Up: {upDot}\n" +
                       $"Down: {downDot}\n" +
                       $"Left: {leftDot}\n" +
@@ -75,6 +100,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     public string GetDebugText()
     {
-        return debugString;
+        return debugText;
     }
 }
