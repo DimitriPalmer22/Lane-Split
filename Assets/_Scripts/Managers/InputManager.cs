@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -19,7 +20,7 @@ public class InputManager : MonoBehaviour, IDebugManaged
         DownLeft,
         DownRight
     }
-    
+
     public static InputManager Instance { get; private set; }
     public PlayerControls PlayerControls { get; private set; }
 
@@ -29,13 +30,15 @@ public class InputManager : MonoBehaviour, IDebugManaged
 
     private Vector2 _startTouchPosition;
 
-    [SerializeField] private float swipeThreshold = 100f;
-
     private Vector2 _currentTouchPosition;
 
     private bool _isSwiping;
 
     private Vector2 _swipe;
+
+    [SerializeField] [Tooltip("What percentage of the screen should the swipe be to be considered a swipe?")]
+    [Range(0, 1)]
+    private float swipeDetectionThreshold = 0.1f;
 
     #endregion
 
@@ -124,16 +127,18 @@ public class InputManager : MonoBehaviour, IDebugManaged
         var normalizedDifference = difference.normalized;
         var differenceDistance = difference.magnitude;
 
-        // TODO: Implement a system for making some swipes invalid
-        // Resolution-based?
+        // a system for making some swipes invalid
+        if (!IsValidSwipe(difference))
+            return;
 
         // Set the swipe vector
         _swipe = difference;
 
-        // Call an event to notify other classes that a swipe has been detected
-        onSwipe?.Invoke(_swipe, DetermineDirection(_swipe));
+        // Determine which direction the swipe is in
+        var direction = DetermineDirection(_swipe);
 
-        // TODO: When registering swipes, use dot product to determine which direction a swipe is in
+        // Call an event to notify other classes that a swipe has been detected
+        onSwipe?.Invoke(_swipe, direction);
     }
 
     #endregion
@@ -145,8 +150,28 @@ public class InputManager : MonoBehaviour, IDebugManaged
                $"Swipe: {_swipe}\n";
     }
 
+    private bool IsValidSwipe(Vector2 swipe)
+    {
+        // Get the screen width and height
+        var screenWidth = Screen.width;
+        var screenHeight = Screen.height;
+
+        // Determine which dimension is smaller
+        var smallerDimension = screenWidth < screenHeight ? screenWidth : screenHeight;
+
+        // Calculate the swipe threshold
+        var swipeThreshold = smallerDimension * swipeDetectionThreshold;
+
+        // If the swipe distance is less than the threshold, return false
+        if (swipe.magnitude < swipeThreshold)
+            return false;
+
+        return true;
+    }
+
     private static SwipeDirection DetermineDirection(Vector2 obj)
     {
+        // Make vectors for 8 directions
         var up = Vector2.up;
         var down = Vector2.down;
         var left = Vector2.left;
@@ -156,29 +181,38 @@ public class InputManager : MonoBehaviour, IDebugManaged
         var downLeft = (Vector2.down + Vector2.left).normalized;
         var downRight = (Vector2.down + Vector2.right).normalized;
 
+        // Create dot products from the swipe vector and the 8 directions
         var upDot = Vector2.Dot(obj.normalized, up);
         var downDot = Vector2.Dot(obj.normalized, down);
-        var leftDot = Vector2.Dot(obj.normalized, left);   
+        var leftDot = Vector2.Dot(obj.normalized, left);
         var rightDot = Vector2.Dot(obj.normalized, right);
         var upLeftDot = Vector2.Dot(obj.normalized, upLeft);
         var upRightDot = Vector2.Dot(obj.normalized, upRight);
         var downLeftDot = Vector2.Dot(obj.normalized, downLeft);
         var downRightDot = Vector2.Dot(obj.normalized, downRight);
-        
-        // Add all the dots to a sorted list
-        var dots = new SortedList<float, SwipeDirection>
+
+        // Add all the dots to a dictionary
+        var dotsDict = new Dictionary<SwipeDirection, float>
         {
-            {upDot, SwipeDirection.Up},
-            {downDot, SwipeDirection.Down},
-            {leftDot, SwipeDirection.Left},
-            {rightDot, SwipeDirection.Right},
-            {upLeftDot, SwipeDirection.UpLeft},
-            {upRightDot, SwipeDirection.UpRight},
-            {downLeftDot, SwipeDirection.DownLeft},
-            {downRightDot, SwipeDirection.DownRight}
+            { SwipeDirection.Up, upDot },
+            { SwipeDirection.Down, downDot },
+            { SwipeDirection.Left, leftDot },
+            { SwipeDirection.Right, rightDot },
+            { SwipeDirection.UpLeft, upLeftDot },
+            { SwipeDirection.UpRight, upRightDot },
+            { SwipeDirection.DownLeft, downLeftDot },
+            { SwipeDirection.DownRight, downRightDot }
         };
-        
-        // Return the largest dot
-        return dots[dots.Keys[dots.Count - 1]];
+
+        var largest = SwipeDirection.Up;
+        foreach (var item in dotsDict.Keys)
+        {
+            if (dotsDict[item] > dotsDict[largest])
+                largest = item;
+        }
+
+        // Return the largest dot product.
+        // This is the direction the player MOST LIKELY swiped
+        return largest;
     }
 }
