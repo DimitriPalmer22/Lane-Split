@@ -9,14 +9,27 @@ public class TestLevelManager : MonoBehaviour
 
     [SerializeField] private TestPlayerScript player;
 
+    [SerializeField] private float moveSpeed = 4;
+
     [Header("Lanes")] [SerializeField] private float laneWidth;
     [SerializeField] private int laneCount;
 
-    public float LaneWidth => laneWidth;
+    /// <summary>
+    /// How long each lane is block is on the z-axis. 
+    /// </summary>
+    [SerializeField] private float laneDepth = 4;
 
+    #region Getters
+
+    public float MoveSpeed => moveSpeed;
+
+    public float LaneWidth => laneWidth;
+    public float LaneDepth => laneDepth;
     public int LaneCount => laneCount;
 
     private Vector3 LeftLanePosition => new(-laneCount / 2f * laneWidth + laneWidth / 2, 0, 0);
+
+    #endregion
 
     private void OnEnable()
     {
@@ -41,7 +54,7 @@ public class TestLevelManager : MonoBehaviour
         for (var i = -laneCount / 2; i < (laneCount - laneCount / 2); i++)
         {
             var position = new Vector3(i * laneWidth + laneWidth / 2, 0, 0);
-            Gizmos.DrawWireCube(position, new Vector3(laneWidth, 0.1f, 5));
+            Gizmos.DrawWireCube(position, new Vector3(laneWidth, 0.1f, laneDepth));
         }
     }
 

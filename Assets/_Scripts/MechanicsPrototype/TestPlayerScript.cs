@@ -38,6 +38,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     // Update is called once per frame
     void Update()
     {
+        // Update the position of the player
+        SetLanePosition();
     }
 
 

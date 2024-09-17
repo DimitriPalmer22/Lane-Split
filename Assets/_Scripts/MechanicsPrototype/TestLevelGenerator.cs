@@ -12,13 +12,6 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     // Used to determine if more lanes should be spawned
     private float _laneZ;
 
-    /// <summary>
-    /// How long each lane is. (Spaces between blocks)
-    /// </summary>
-    [SerializeField] private float laneDepth;
-
-    [SerializeField] private float moveSpeed = 4;
-
     [SerializeField] private float spawnDistance = 16;
 
     // A float to keep track of how far the player has travelled.
@@ -52,16 +45,10 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     void Update()
     {
         // Calculate the distance travelled
-        var moveAmount = moveSpeed * Time.deltaTime;
+        var moveAmount = _levelManager.MoveSpeed * Time.deltaTime;
 
         // Move the lanes backwards
         transform.position += -Vector3.forward * moveAmount;
-
-        transform.position = new Vector3(
-            transform.position.x,
-            transform.position.y,
-            transform.position.z
-        );
 
         // Add the move amount to the distance travelled
         _distanceTravelled += moveAmount;
@@ -71,6 +58,9 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
         // Check if we need to destroy lanes
         DestroyLanes();
+
+        // Check if we need to move the entire level
+        // MoveEntireLevel();
     }
 
     private void InitializeLanes()
@@ -95,14 +85,15 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
                     new Vector3(_levelManager.GetLanePosition(i).x, -1f, _laneZ);
 
                 // Update the scale of the object
-                obj.transform.localScale = new Vector3(_levelManager.LaneWidth * 7 / 8, 1, laneDepth * 7 / 8);
+                obj.transform.localScale =
+                    new Vector3(_levelManager.LaneWidth * 7 / 8, 1, _levelManager.LaneDepth * 7 / 8);
 
                 // Add the object to the spawned lanes
                 _spawnedLanes[_laneZ].Add(obj);
             }
 
             // Increase the lane z
-            _laneZ += laneDepth;
+            _laneZ += _levelManager.LaneDepth;
         }
     }
 
@@ -132,6 +123,45 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
             }
         }
     }
+
+    private void MoveEntireLevel()
+    {
+        // Return if the transform z is less than the reset distance
+        if (transform.position.z > -DISTANCE_RESET)
+            return;
+
+        // Add the distance reset to the transform position
+        transform.position += Vector3.forward * DISTANCE_RESET;
+
+        // Find the largest key in the spawned lanes
+        var largestKey = 0f;
+        foreach (var key in _spawnedLanes.Keys)
+        {
+            if (key > largestKey)
+                largestKey = key;
+        }
+        
+        // Get the remainder of the largest key divided by the ResetDistance
+        var keyRemainder = largestKey % DISTANCE_RESET;
+        
+        // Get the difference between the largest key and the remainder
+        var keyDifference = largestKey - keyRemainder;
+        
+        // Move all the lanes forward
+        foreach (var key in _spawnedLanes.Keys)
+        {
+            foreach (var obj in _spawnedLanes[key])
+            {
+                obj.transform.localPosition =
+                    new Vector3(
+                        obj.transform.localPosition.x,
+                        obj.transform.localPosition.y,
+                        obj.transform.localPosition.z - keyDifference
+                    );
+            }
+        }
+    }
+
 
     public string GetDebugText()
     {
