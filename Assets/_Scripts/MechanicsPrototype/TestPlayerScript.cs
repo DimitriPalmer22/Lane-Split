@@ -18,7 +18,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Add this object to the debug manager
         DebugManager.Instance.AddDebugItem(this);
-        
+
         // Set the player to the far left lane
         _lane = 0;
         SetLanePosition();
@@ -45,19 +45,18 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private void MoveOnSwipe(Vector2 swipe, InputManager.SwipeDirection direction)
     {
-        var moveDistance = TestLevelManager.Instance.LaneWidth;
-
-        switch (direction)
+        // Update the lane based on the swipe direction
+        var modifier = direction switch
         {
-            case InputManager.SwipeDirection.Left:
-                _lane = Mathf.Clamp(_lane - 1, 0, TestLevelManager.Instance.LaneCount - 1);
-                break;
+            InputManager.SwipeDirection.Left => -1,
+            InputManager.SwipeDirection.Right => 1,
+            _ => 0
+        };
 
-            case InputManager.SwipeDirection.Right:
-                _lane = Mathf.Clamp(_lane + 1, 0, TestLevelManager.Instance.LaneCount - 1);
-                break;
-        }
-        
+        // Ensure the lane is within the bounds
+        _lane = Mathf.Clamp(_lane + modifier, 0, TestLevelManager.Instance.LaneCount - 1);
+
+        // Update the position of the player
         SetLanePosition();
     }
 
@@ -65,6 +64,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private void SetLanePosition()
     {
+        // Set the x position of the player based on the lane
         transform.position = TestLevelManager.Instance.GetLanePosition(_lane) +
                              new Vector3(0, transform.position.y, transform.position.z);
     }
