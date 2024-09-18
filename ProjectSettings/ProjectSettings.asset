@@ -845,8 +845,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: Lane Split
-  metroPackageVersion: 
+  metroPackageName: LaneSplit
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -854,7 +854,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: Lane Split
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: Lane Split
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0

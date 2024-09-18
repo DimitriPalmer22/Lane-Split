@@ -12,8 +12,12 @@ public class DriftControl : MonoBehaviour
     public float speed = 10.0f;
     private float driftRotationSpeed = 100.0f; // Increase rotation speed for a tighter drift
     private float driftForceMultiplier = 1.5f; // Extra force to simulate tighter control
-    public float straightenSpeed = 1f;
-    public Quaternion targetRotation;
+    
+    private float minRotation = 0f;
+    private float maxRotation = 360f;
+
+    //public float straightenSpeed = 1f;
+    //public Quaternion targetRotation;
     private void Awake()
     {
         // Initialize input actions
@@ -46,6 +50,9 @@ public class DriftControl : MonoBehaviour
 
         if (isDrifting)
         {
+            Vector3 currentRotation = transform.eulerAngles;
+            currentRotation.y = Mathf.Clamp(currentRotation.y,minRotation,maxRotation);
+            transform.eulerAngles = currentRotation; 
             // Rotate the game object while drifting
             transform.Rotate(0, driftRotationSpeed * Time.fixedDeltaTime, 0); 
 
@@ -53,18 +60,21 @@ public class DriftControl : MonoBehaviour
             Vector3 driftForce = transform.right * driftForceMultiplier;
             rb.AddForce(driftForce, ForceMode.Acceleration);
         }
-        else
+        
+
+        
+        // if()
         {
-            // Gradually decrease the forward speed after drifting
-            speed = Mathf.Lerp(speed, 0, Time.fixedDeltaTime * 2);
+            // // Gradually decrease the forward speed after drifting
+            // speed = Mathf.Lerp(speed, 0, Time.fixedDeltaTime * 2);
 
             // Rotate the car back to its original direction gradually
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, straightenSpeed * Time.fixedDeltaTime);
+            // transform.rotation = Quaternion.lerp();
 
-            // Clamp the rotation to prevent excessive spinning
-            Vector3 clampedEulerAngles = transform.eulerAngles;
-            clampedEulerAngles.y = Mathf.Clamp(clampedEulerAngles.y, -120f, 120f); // Example limits
-            transform.eulerAngles = clampedEulerAngles;
+            // // Clamp the rotation to prevent excessive spinning
+            // Vector3 clampedEulerAngles = transform.eulerAngles;
+            // clampedEulerAngles.y = Mathf.Clamp(clampedEulerAngles.y, -120f, 120f); // Example limits
+            // transform.eulerAngles = clampedEulerAngles;
         }
     }
     
