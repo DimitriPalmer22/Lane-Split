@@ -88,15 +88,23 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
             // Create a bool array to store which lanes have obstacles
             var hasObstacle = new bool[_levelManager.LaneCount];
 
-            // Loop through each lane and determine if it has an obstacle
-            for (var i = 0; i < _levelManager.LaneCount; i++)
-                hasObstacle[i] = UnityEngine.Random.value < obstacleChance;
+            var startingAreaLength = 2 * _levelManager.LaneDepth;
 
-            // Check to see if all lanes have an obstacle. If so, remove a random one
-            if (Array.TrueForAll(hasObstacle, x => x))
-                hasObstacle[UnityEngine.Random.Range(0, _levelManager.LaneCount)] = false;
+            if (_laneZ >= startingAreaLength)
+            {
+                // Loop through each lane and determine if it has an obstacle
+                for (var i = 0; i < _levelManager.LaneCount; i++)
+                    hasObstacle[i] = UnityEngine.Random.value < obstacleChance;
+
+                // Check to see if all lanes have an obstacle.
+                // If so, remove a random one
+                if (Array.TrueForAll(hasObstacle, x => x))
+                    hasObstacle[UnityEngine.Random.Range(0, _levelManager.LaneCount)] = false;
+            }
 
             // Create a cube to represent each lane in the level
+            // Skip if the current laneZ is less than the depth of the lane
+            // (to prevent obstacles from spawning in the start area)
             for (var i = 0; i < _levelManager.LaneCount; i++)
             {
                 // Create a new cube object
@@ -110,6 +118,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
                 // Get the collider from the object
                 var objCollider = obj.GetComponent<Collider>();
+                objCollider.isTrigger = true;
 
                 // Initialize the lane script with the obstacle value
                 laneScript.Initialize(hasObstacle[i], laneMaterial, obstacleMaterial);

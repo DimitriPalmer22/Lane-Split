@@ -11,6 +11,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private TestPlayerScript player;
 
+    public TestPlayerScript Player => player;
+    
     private void Awake()
     {
         // Update the instance
