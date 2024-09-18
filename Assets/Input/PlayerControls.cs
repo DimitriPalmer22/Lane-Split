@@ -71,6 +71,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Boost"",
+                    ""type"": ""Button"",
+                    ""id"": ""df4c262d-958d-4540-ba1c-44b8d7589c82"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -205,6 +214,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Swerve"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8861ff0e-9300-47a3-80a2-1601025e01d3"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Boost"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7638e470-da93-47bd-83a0-5550c76ef6b9"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Boost"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -229,6 +260,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Gameplay_Position = m_Gameplay.FindAction("Position", throwIfNotFound: true);
         m_Gameplay_Debug = m_Gameplay.FindAction("Debug", throwIfNotFound: true);
         m_Gameplay_drift = m_Gameplay.FindAction("drift", throwIfNotFound: true);
+        m_Gameplay_Boost = m_Gameplay.FindAction("Boost", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -295,6 +327,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Position;
     private readonly InputAction m_Gameplay_Debug;
     private readonly InputAction m_Gameplay_drift;
+    private readonly InputAction m_Gameplay_Boost;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -304,6 +337,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Position => m_Wrapper.m_Gameplay_Position;
         public InputAction @Debug => m_Wrapper.m_Gameplay_Debug;
         public InputAction @drift => m_Wrapper.m_Gameplay_drift;
+        public InputAction @Boost => m_Wrapper.m_Gameplay_Boost;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -328,6 +362,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @drift.started += instance.OnDrift;
             @drift.performed += instance.OnDrift;
             @drift.canceled += instance.OnDrift;
+            @Boost.started += instance.OnBoost;
+            @Boost.performed += instance.OnBoost;
+            @Boost.canceled += instance.OnBoost;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -347,6 +384,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @drift.started -= instance.OnDrift;
             @drift.performed -= instance.OnDrift;
             @drift.canceled -= instance.OnDrift;
+            @Boost.started -= instance.OnBoost;
+            @Boost.performed -= instance.OnBoost;
+            @Boost.canceled -= instance.OnBoost;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -389,5 +429,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnPosition(InputAction.CallbackContext context);
         void OnDebug(InputAction.CallbackContext context);
         void OnDrift(InputAction.CallbackContext context);
+        void OnBoost(InputAction.CallbackContext context);
     }
 }

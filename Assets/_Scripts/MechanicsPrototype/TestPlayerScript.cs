@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,15 +11,22 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     
     private bool _isAlive = true;
 
+    [SerializeField] private float maxBoost = 10;
+    private float _currentBoost;
+
+    #region Getters
+
     public int Lane => _lane;
-    
     public bool IsAlive => _isAlive;
+
+    #endregion
 
     // Start is called before the first frame update
     void Start()
     {
         // Initialize the input
         InputManager.Instance.OnSwipe += MoveOnSwipe;
+        InputManager.Instance.PlayerControls.Gameplay.Boost.performed += OnBoostPerformed;
 
         // Add this object to the debug manager
         DebugManager.Instance.AddDebugItem(this);
@@ -29,10 +37,12 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     }
 
 
+
     private void OnDestroy()
     {
         // Remove this object from the debug manager
         InputManager.Instance.OnSwipe -= MoveOnSwipe;
+        InputManager.Instance.PlayerControls.Gameplay.Boost.performed -= OnBoostPerformed;
 
         // Remove this object from the debug manager
         DebugManager.Instance.RemoveDebugItem(this);
@@ -91,18 +101,45 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         ChangeLanes(modifier);
     }
 
+    private void OnBoostPerformed(InputAction.CallbackContext context)
+    {
+        Boost();
+    }
+
     private void Boost()
     {
-        Debug.Log("Boosting!");
+        Debug.Log("Boosting");
     }
 
     private void ChangeLanes(int modifier)
     {
+        int oldLane = _lane;
+
         // Ensure the lane is within the bounds
         _lane = Mathf.Clamp(_lane + modifier, 0, TestLevelManager.Instance.LaneCount - 1);
 
+        // return if there was no change
+        if (oldLane == _lane)
+            return;
+
         // Update the position of the player
         SetLanePosition();
+
+        // Near miss code
+        // Get all Obstacle scripts
+        var allObstacles = TestLevelManager.Instance.LevelGenerator.SpawnedLanes
+            .SelectMany(n => n.Value)
+            .Where(n => n.HasObstacle)
+            .Select(n => n.Obstacle);
+
+        // Get all obstacles within near miss distance
+        var validObstacles = allObstacles
+        .Where(
+            n => Vector3.Distance(n.transform.position, transform.position) <= TestLevelManager.Instance.NearMissSize
+        );
+               // .Where(n => n.TestLaneScript.LaneNumber == _lane || n.TestLaneScript.LaneNumber == oldLane)
+        foreach (var obstacle in validObstacles)
+            Debug.Log($"Near Missed: {obstacle} {obstacle.TestLaneScript.LaneNumber}");
     }
 
     #endregion
@@ -140,8 +177,14 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
                              new Vector3(0, transform.position.y, transform.position.z);
     }
 
+    private void AddBoost(float amount)
+    {
+        _currentBoost = Mathf.Clamp(_currentBoost + amount, 0, maxBoost);
+    }
+
     public string GetDebugText()
     {
-        return $"Player Alive?: {_isAlive}\n";
+        return $"Player Alive?: {_isAlive}\n" +
+               $"Boost: {_currentBoost} / {maxBoost}";
     }
 }

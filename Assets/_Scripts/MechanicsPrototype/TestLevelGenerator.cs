@@ -36,6 +36,9 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     public float DistanceTravelled => _distanceTravelled;
 
+    public Dictionary<float, HashSet<TestLaneScript>> SpawnedLanes => _spawnedLanes;
+
+
     private void Awake()
     {
         // Get the level manager
@@ -105,7 +108,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
             // Create a cube to represent each lane in the level
             // Skip if the current laneZ is less than the depth of the lane
             // (to prevent obstacles from spawning in the start area)
-            for (var i = 0; i < _levelManager.LaneCount; i++)
+            for (var laneNumber = 0; laneNumber < _levelManager.LaneCount; laneNumber++)
             {
                 // Create a new cube object
                 var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -121,11 +124,11 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
                 objCollider.isTrigger = true;
 
                 // Initialize the lane script with the obstacle value
-                laneScript.Initialize(hasObstacle[i], laneMaterial, obstacleMaterial);
+                laneScript.Initialize(laneNumber, hasObstacle[laneNumber], laneMaterial, obstacleMaterial);
 
                 // Set the local position of the object
                 obj.transform.localPosition =
-                    new Vector3(_levelManager.GetLanePosition(i).x, -1f, _laneZ);
+                    new Vector3(_levelManager.GetLanePosition(laneNumber).x, -1f, _laneZ);
 
                 // Add the object to the spawned lanes
                 _spawnedLanes[_laneZ].Add(laneScript);

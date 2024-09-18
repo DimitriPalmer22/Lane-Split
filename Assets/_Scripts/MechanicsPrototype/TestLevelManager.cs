@@ -25,6 +25,9 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
     [Header("Lanes")] [SerializeField] private float laneWidth;
     [SerializeField] private int laneCount;
 
+    [Range(0f, 5f)] 
+    [SerializeField] private float nearMissSize;
+
     /// <summary>
     /// How long each lane is block is on the z-axis. 
     /// </summary>
@@ -43,6 +46,8 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
     private Vector3 LeftLanePosition => new(-laneCount / 2f * laneWidth + laneWidth / 2, 0, 0);
 
     public TestLevelGenerator LevelGenerator => _levelGenerator;
+
+    public float NearMissSize => nearMissSize;
 
     #endregion
 

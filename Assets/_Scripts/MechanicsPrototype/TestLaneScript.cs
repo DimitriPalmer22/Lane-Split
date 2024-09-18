@@ -3,8 +3,13 @@ using UnityEngine;
 
 public class TestLaneScript : MonoBehaviour
 {
+    private int _laneNumber;
     private bool _hasObstacle;
-    private GameObject _obstacle;
+    private ObstacleScript _obstacle;
+
+    public int LaneNumber => _laneNumber;
+    public bool HasObstacle => _hasObstacle;
+    public ObstacleScript Obstacle => _obstacle;
 
     private void Awake()
     {
@@ -20,8 +25,11 @@ public class TestLaneScript : MonoBehaviour
         Resize();
     }
 
-    public void Initialize(bool obstacle, Material laneMaterial, Material obstacleMaterial)
+    public void Initialize(int laneNumber, bool obstacle, Material laneMaterial, Material obstacleMaterial)
     {
+        // Set the lane number
+        _laneNumber = laneNumber;
+
         // Set the material of the lane
         GetComponent<Renderer>().material = laneMaterial;
 
@@ -34,15 +42,19 @@ public class TestLaneScript : MonoBehaviour
     private void InitializeObstacle(Material obstacleMaterial)
     {
         // Create the obstacle
-        _obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        _obstacle.name = "Obstacle";
-        _obstacle.tag = "Obstacle";
+        var obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        obstacle.name = "Obstacle";
+        obstacle.tag = "Obstacle";
 
-        _obstacle.transform.SetParent(transform);
-        _obstacle.transform.localPosition = new Vector3(0, 1, 0);
+        obstacle.transform.SetParent(transform);
+        obstacle.transform.localPosition = new Vector3(0, 1, 0);
 
         // Set the material of the obstacle
-        _obstacle.GetComponent<Renderer>().material = obstacleMaterial;
+        obstacle.GetComponent<Renderer>().material = obstacleMaterial;
+
+        // Add an obstacleScript to the obstacle
+        _obstacle = obstacle.AddComponent<ObstacleScript>();
+        _obstacle.Initialize(this);
     }
 
     private void Resize()

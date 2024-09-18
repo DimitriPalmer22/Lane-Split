@@ -782,6 +782,7 @@ MonoBehaviour:
   levelLength: 6
   laneWidth: 2.5
   laneCount: 4
+  nearMissSize: 3
   laneDepth: 6
 --- !u!114 &598667997
 MonoBehaviour:
