@@ -99,6 +99,31 @@ public class InputManager : MonoBehaviour, IDebugManaged
     {
         PlayerControls.Gameplay.Press.started += StartSwipeDetection;
         PlayerControls.Gameplay.Press.canceled += EndSwipeDetection;
+
+        PlayerControls.Gameplay.Swerve.started += OnSwerve;
+    }
+
+    private void OnSwerve(InputAction.CallbackContext context)
+    {
+        // Read the direction of the swerve
+        var direction = context.ReadValue<float>();
+
+        if (direction == 0)
+            return;
+
+        var tmpSwipe = Vector2.right * direction;
+
+        SwipeDirection swipeDirection = default;
+
+        if (direction < 0)
+            swipeDirection = SwipeDirection.Left;
+        else
+            swipeDirection = SwipeDirection.Right;
+
+
+        // Call an event to notify other classes that a swipe has been detected
+        OnSwipe?.Invoke(tmpSwipe, swipeDirection);
+
     }
 
     private Vector2 UpdateCurrentTouchPosition()
