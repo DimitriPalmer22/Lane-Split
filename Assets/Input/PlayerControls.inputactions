@@ -98,11 +98,33 @@
                 },
                 {
                     "name": "",
+                    "id": "575c47a2-d1eb-4239-8343-8c5fc3d05ca3",
+                    "path": "<Mouse>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse",
+                    "action": "Press",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "eff08613-6e95-471a-9d73-d79965a56195",
                     "path": "<Touchscreen>/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
+                    "action": "Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1ff6f727-002f-4f60-a0a8-dde741e38115",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse",
                     "action": "Position",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -136,6 +158,11 @@
         {
             "name": "Touch",
             "bindingGroup": "Touch",
+            "devices": []
+        },
+        {
+            "name": "Mouse",
+            "bindingGroup": "Mouse",
             "devices": []
         }
     ]
