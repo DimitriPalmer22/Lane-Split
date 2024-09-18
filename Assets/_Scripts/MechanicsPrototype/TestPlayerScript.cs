@@ -9,7 +9,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private String _debugText = "";
 
     private int _lane;
-    
+
     public int Lane => _lane;
 
     // Start is called before the first frame update
@@ -49,6 +49,13 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private void MoveOnSwipe(Vector2 swipe, InputManager.SwipeDirection direction)
     {
+        // Boost the player if they swipe up
+        if (direction == InputManager.SwipeDirection.Up)
+        {
+            Boost();
+            return;
+        }
+
         // Update the lane based on the swipe direction
         var modifier = direction switch
         {
@@ -57,13 +64,23 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             _ => 0
         };
 
+        ChangeLanes(modifier);
+    }
+
+    private void Boost()
+    {
+        Debug.Log("Boosting!");
+    }
+    
+    private void ChangeLanes(int modifier)
+    {
         // Ensure the lane is within the bounds
         _lane = Mathf.Clamp(_lane + modifier, 0, TestLevelManager.Instance.LaneCount - 1);
 
         // Update the position of the player
         SetLanePosition();
     }
-
+    
     #endregion
 
     private void SetLanePosition()
