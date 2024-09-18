@@ -13,6 +13,8 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
 
     [SerializeField] private float speedIncreaseMultiplier = 1.5f;
 
+    [SerializeField] private float speedIncreaseAmount = 4;
+
     [Tooltip("How long the level should takes in seconds.")] [SerializeField]
     private float levelLength = 10;
 
@@ -87,6 +89,9 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
 
         // Increase the move speed
         moveSpeed *= speedIncreaseMultiplier;
+        
+        // Add the speed increase amount
+        moveSpeed += speedIncreaseAmount;
     }
 
 

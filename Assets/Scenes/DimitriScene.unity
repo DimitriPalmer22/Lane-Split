@@ -643,7 +643,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1341012953}
   moveSpeed: 8
-  speedIncreaseMultiplier: 1.25
+  speedIncreaseMultiplier: 1
+  speedIncreaseAmount: 4
   levelLength: 6
   laneWidth: 2.5
   laneCount: 4
@@ -663,7 +664,7 @@ MonoBehaviour:
   spawnDistance: 96
   laneScaleX: 0.875
   laneScaleZ: 1
-  obstacleChance: 0.25
+  obstacleChance: 0.125
   laneMaterial: {fileID: 2100000, guid: 032b8f13b6327b82b88bcc941210d7da, type: 2}
   obstacleMaterial: {fileID: 2100000, guid: c4c6840fba3a73e4983e19c802076db1, type: 2}
 --- !u!4 &741348023 stripped
@@ -1046,7 +1047,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxShake: 1.5
   maxSpeed: 100
-  minSpeed: 20
+  minSpeed: 10
   shakeCurve:
     serializedVersion: 2
     m_Curve:
