@@ -24,7 +24,7 @@ public class InputManager : MonoBehaviour, IDebugManaged
     public static InputManager Instance { get; private set; }
     public PlayerControls PlayerControls { get; private set; }
 
-    public event Action<Vector2, SwipeDirection> onSwipe;
+    public event Action<Vector2, SwipeDirection> OnSwipe;
 
     #region Swipe Detection
 
@@ -46,15 +46,18 @@ public class InputManager : MonoBehaviour, IDebugManaged
 
     private void Awake()
     {
-        // Set the instance to this object if it is null
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
+        // // Set the instance to this object if it is null
+        // if (Instance == null)
+        //     Instance = this;
+        // else
+        //     Destroy(gameObject);
+        //
+        // // Don't destroy this object when loading a new scene
+        // DontDestroyOnLoad(gameObject);
 
-        // Don't destroy this object when loading a new scene
-        DontDestroyOnLoad(gameObject);
-
+        // Set the instance to this object
+        Instance = this;
+        
         // Create a new instance of the PlayerControls class
         PlayerControls = new PlayerControls();
     }
@@ -138,7 +141,7 @@ public class InputManager : MonoBehaviour, IDebugManaged
         var direction = DetermineDirection(_swipe);
 
         // Call an event to notify other classes that a swipe has been detected
-        onSwipe?.Invoke(_swipe, direction);
+        OnSwipe?.Invoke(_swipe, direction);
     }
 
     #endregion

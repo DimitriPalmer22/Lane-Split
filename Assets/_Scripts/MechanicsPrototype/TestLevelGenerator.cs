@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(TestLevelManager))]
 public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 {
+    private const float DISTANCE_RESET = 128;
+
     private TestLevelManager _levelManager;
 
     // How far forward the generated lanes are going.
@@ -26,7 +28,6 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     // Used to spawn and destroy lanes
     private float _distanceTravelled;
 
-    private const float DISTANCE_RESET = 128;
 
     private Dictionary<float, HashSet<TestLaneScript>> _spawnedLanes;
 
@@ -106,6 +107,9 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
                 // Add a Test Lane Script to the object
                 var laneScript = obj.AddComponent<TestLaneScript>();
+
+                // Get the collider from the object
+                var objCollider = obj.GetComponent<Collider>();
 
                 // Initialize the lane script with the obstacle value
                 laneScript.Initialize(hasObstacle[i], laneMaterial, obstacleMaterial);

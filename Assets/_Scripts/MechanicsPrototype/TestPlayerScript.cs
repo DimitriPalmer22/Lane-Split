@@ -6,17 +6,19 @@ using UnityEngine.InputSystem;
 
 public class TestPlayerScript : MonoBehaviour, IDebugManaged
 {
-    private String _debugText = "";
-
     private int _lane;
+    
+    private bool _isAlive = true;
 
     public int Lane => _lane;
+    
+    public bool IsAlive => _isAlive;
 
     // Start is called before the first frame update
     void Start()
     {
         // Initialize the input
-        InputManager.Instance.onSwipe += MoveOnSwipe;
+        InputManager.Instance.OnSwipe += MoveOnSwipe;
 
         // Add this object to the debug manager
         DebugManager.Instance.AddDebugItem(this);
@@ -30,7 +32,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private void OnDestroy()
     {
         // Remove this object from the debug manager
-        InputManager.Instance.onSwipe -= MoveOnSwipe;
+        InputManager.Instance.OnSwipe -= MoveOnSwipe;
 
         // Remove this object from the debug manager
         DebugManager.Instance.RemoveDebugItem(this);
@@ -49,6 +51,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private void MovePlayer()
     {
+        // Return if the player is dead
+        if (!_isAlive)
+            return;
+
         var moveAmount = TestLevelManager.Instance.MoveSpeed * Time.deltaTime;
 
         // Move the player forward
@@ -63,6 +69,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private void MoveOnSwipe(Vector2 swipe, InputManager.SwipeDirection direction)
     {
+        // Return if the player is dead
+        if (!_isAlive)
+            return;
+        
         // Boost the player if they swipe up
         if (direction == InputManager.SwipeDirection.Up)
         {
@@ -97,8 +107,34 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     #endregion
 
+    private void OnTriggerEnter(Collider other)
+    {
+        // Return if the player is dead
+        if (!_isAlive)
+            return;
+
+        // Check if the player has collided with an obstacle, if so kill the player
+        if (other.CompareTag("Obstacle"))
+        {
+            Debug.Log($"Player collided with: {other.name} ({other.tag})");
+            KillPlayer();
+        }
+    }
+
+    private void KillPlayer()
+    {
+        Debug.Log("Killed Player!");
+        
+        // Set the player to dead
+        _isAlive = false;
+    }
+
     private void SetLanePosition()
     {
+        // Return if the player is dead
+        if (!_isAlive)
+            return;
+
         // Set the x position of the player based on the lane
         transform.position = TestLevelManager.Instance.GetLanePosition(_lane) +
                              new Vector3(0, transform.position.y, transform.position.z);
@@ -106,6 +142,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     public string GetDebugText()
     {
-        return _debugText;
+        return $"Player Alive?: {_isAlive}\n";
     }
 }

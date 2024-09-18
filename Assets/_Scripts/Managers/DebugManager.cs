@@ -17,15 +17,18 @@ public class DebugManager : MonoBehaviour, IDebugManaged
 
     private void Awake()
     {
+        // // Set the instance to this object
+        // if (Instance == null)
+        //     Instance = this;
+        // else
+        //     Destroy(gameObject);
+        //
+        // // Set the object to not be destroyed when loading a new scene
+        // DontDestroyOnLoad(gameObject);
+
         // Set the instance to this object
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-
-        // Set the object to not be destroyed when loading a new scene
-        DontDestroyOnLoad(gameObject);
-
+        Instance = this;
+        
         // Force the debug flag to false
         SetDebug(true);
         SetDebug(false);

@@ -36,6 +36,7 @@ public class TestLaneScript : MonoBehaviour
         // Create the obstacle
         _obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
         _obstacle.name = "Obstacle";
+        _obstacle.tag = "Obstacle";
 
         _obstacle.transform.SetParent(transform);
         _obstacle.transform.localPosition = new Vector3(0, 1, 0);
