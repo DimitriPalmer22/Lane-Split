@@ -9,8 +9,11 @@ public class DriftControl : MonoBehaviour
     private PlayerControls inputActions; // Reference to input actions
     private Vector2 moveInput;
     private bool isDrifting;
-    private float speed = 10.0f;
-
+    public float speed = 10.0f;
+    private float driftRotationSpeed = 100.0f; // Increase rotation speed for a tighter drift
+    private float driftForceMultiplier = 1.5f; // Extra force to simulate tighter control
+    public float straightenSpeed = 1f;
+    public Quaternion targetRotation;
     private void Awake()
     {
         // Initialize input actions
@@ -32,20 +35,39 @@ public class DriftControl : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        
     }
 
     // Propel player forward
     private void FixedUpdate()
     {
         // Continuously apply forward force
-        rb.AddForce(-transform.forward * speed, ForceMode.Force);
+        rb.AddForce(transform.forward * speed, ForceMode.Force);
 
-        // If drifting, rotate the game object 25 degrees on its y-axis
         if (isDrifting)
         {
-            transform.Rotate(0, 25 * Time.fixedDeltaTime, 0); // Smooth rotation
+            // Rotate the game object while drifting
+            transform.Rotate(0, driftRotationSpeed * Time.fixedDeltaTime, 0); 
+
+            // Optionally apply additional force for drifting effects
+            Vector3 driftForce = transform.right * driftForceMultiplier;
+            rb.AddForce(driftForce, ForceMode.Acceleration);
+        }
+        else
+        {
+            // Gradually decrease the forward speed after drifting
+            speed = Mathf.Lerp(speed, 0, Time.fixedDeltaTime * 2);
+
+            // Rotate the car back to its original direction gradually
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, straightenSpeed * Time.fixedDeltaTime);
+
+            // Clamp the rotation to prevent excessive spinning
+            Vector3 clampedEulerAngles = transform.eulerAngles;
+            clampedEulerAngles.y = Mathf.Clamp(clampedEulerAngles.y, -120f, 120f); // Example limits
+            transform.eulerAngles = clampedEulerAngles;
         }
     }
+    
 
     private void StartDrift()
     {
@@ -61,25 +83,24 @@ public class DriftControl : MonoBehaviour
     }
 
     // Detecting the trigger to enable drift
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("DriftZone")) // Assuming the drift area has a tag "DriftZone"
-        {
-            //animator for drift animation
-        }
-    }
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     if (other.CompareTag("DriftZone")) // Assuming the drift area has a tag "DriftZone"
+    //     {
+    //         //animator for drift animation
+    //     }
+    // }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("DriftZone"))
-        {
-            isDrifting = false; // Stop drifting when leaving the drift zone
-        }
-    }
+    // private void OnTriggerExit(Collider other)
+    // {
+    //     if (other.CompareTag("DriftZone"))
+    //     {
+    //         isDrifting = false; // Stop drifting when leaving the drift zone
+    //     }
+    // }
 
     private bool CanDrift()
     {
-        // Your logic to determine if drifting is possible
         return true; // Placeholder
     }
 }
