@@ -20,7 +20,7 @@ public class TestUI : MonoBehaviour
     {
         // Update the info text
         UpdateInfoText();
-        
+
         // Update the game over text
         UpdateGameOverText();
     }
@@ -36,5 +36,10 @@ public class TestUI : MonoBehaviour
     private void UpdateGameOverText()
     {
         gameOverText.gameObject.SetActive(!LevelManager.Instance.Player.IsAlive);
+
+        if (!LevelManager.Instance.Player.IsAlive)
+            gameOverText.text = $"Game Over\n" +
+                                $"Score: {TestLevelManager.Instance.LevelGenerator.DistanceTravelled}\n" +
+                                $"Tap to restart";
     }
 }
