@@ -12,14 +12,14 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
     [SerializeField] private float moveSpeed = 4;
 
     [SerializeField] private float speedIncreaseMultiplier = 1.5f;
-    
-    [Tooltip("How long the level should takes in seconds.")]
-    [SerializeField] private float levelLength = 10;
+
+    [Tooltip("How long the level should takes in seconds.")] [SerializeField]
+    private float levelLength = 10;
 
     private float _currentLevelTimer;
 
     private float _totalTime;
-    
+
     [Header("Lanes")] [SerializeField] private float laneWidth;
     [SerializeField] private int laneCount;
 
@@ -61,7 +61,7 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
     {
         // Add this to the debug manager
         DebugManager.Instance.AddDebugItem(this);
-        
+
         // Set the current level timer to the level length
         _currentLevelTimer = levelLength;
     }
@@ -71,7 +71,7 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
     {
         // Update the total time
         _totalTime += Time.deltaTime;
-        
+
         // Update the level timer
         _currentLevelTimer -= Time.deltaTime;
 
@@ -84,12 +84,12 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
     {
         // Reset the level timer
         _currentLevelTimer += levelLength;
-        
+
         // Increase the move speed
         moveSpeed *= speedIncreaseMultiplier;
     }
 
-    
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

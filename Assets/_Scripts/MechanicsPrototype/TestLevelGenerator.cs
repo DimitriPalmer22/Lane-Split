@@ -33,6 +33,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     public float LaneScaleX => laneScaleX;
     public float LaneScaleZ => laneScaleZ;
 
+    public float DistanceTravelled => _distanceTravelled;
+
     private void Awake()
     {
         // Get the level manager
