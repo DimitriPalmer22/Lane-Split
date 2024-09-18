@@ -55,11 +55,11 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         // Calculate the distance travelled
         var moveAmount = _levelManager.MoveSpeed * Time.deltaTime;
 
-        // Move the lanes backwards
-        transform.position += -Vector3.forward * moveAmount;
-
-        // Add the move amount to the distance travelled
-        _distanceTravelled += moveAmount;
+        // // Move the lanes backwards
+        // transform.position += -Vector3.forward * moveAmount;
+        //
+        // // Add the move amount to the distance travelled
+        // _distanceTravelled += moveAmount;
 
         // Check if we need to spawn more lanes
         InitializeLanes();
@@ -142,6 +142,11 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         }
     }
 
+    public void AddDistanceTravelled(float distance)
+    {
+        _distanceTravelled += distance;
+    }
+    
     private void MoveEntireLevel()
     {
         // Return if the transform z is less than the reset distance

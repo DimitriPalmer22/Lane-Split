@@ -40,8 +40,22 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     // Update is called once per frame
     void Update()
     {
+        // Move the player
+        MovePlayer();
+
         // Update the position of the player
         SetLanePosition();
+    }
+
+    private void MovePlayer()
+    {
+        var moveAmount = TestLevelManager.Instance.MoveSpeed * Time.deltaTime;
+
+        // Move the player forward
+        transform.position += transform.forward * moveAmount;
+
+        // Add the distance travelled to the level generator
+        TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
     }
 
 
@@ -71,7 +85,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     {
         Debug.Log("Boosting!");
     }
-    
+
     private void ChangeLanes(int modifier)
     {
         // Ensure the lane is within the bounds
@@ -80,7 +94,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Update the position of the player
         SetLanePosition();
     }
-    
+
     #endregion
 
     private void SetLanePosition()
