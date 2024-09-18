@@ -198,10 +198,12 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
         Gizmos.color = Color.red;
 
+        var forwardAmt = transform.forward * _distanceTravelled;
+        
         // Draw the point at which the lanes will be spawned
         Gizmos.DrawLine(
-            _levelManager.GetLanePosition(0) + new Vector3(0, 0, spawnDistance),
-            _levelManager.GetLanePosition(_levelManager.LaneCount - 1) + new Vector3(0, 0, spawnDistance)
+            forwardAmt + _levelManager.GetLanePosition(0) + new Vector3(0, 0, spawnDistance),
+            forwardAmt + _levelManager.GetLanePosition(_levelManager.LaneCount - 1) + new Vector3(0, 0, spawnDistance)
         );
     }
 }
