@@ -14,13 +14,19 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [SerializeField] private float spawnDistance = 16;
 
+    [SerializeField] [Range(0.25f, 1)] private float laneScale = 1;
+    
+    [SerializeField] [Range(0, 1)] private float obstacleChance = 0.25f;
+
     // A float to keep track of how far the player has travelled.
     // Used to spawn and destroy lanes
     private float _distanceTravelled;
 
     private const float DISTANCE_RESET = 128;
 
-    private Dictionary<float, HashSet<GameObject>> _spawnedLanes;
+    private Dictionary<float, HashSet<TestLaneScript>> _spawnedLanes;
+
+    public float LaneScale => laneScale;
 
     private void Awake()
     {
@@ -28,7 +34,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         _levelManager = GetComponent<TestLevelManager>();
 
         // Create a new dictionary to store the lanes
-        _spawnedLanes = new Dictionary<float, HashSet<GameObject>>();
+        _spawnedLanes = new Dictionary<float, HashSet<TestLaneScript>>();
     }
 
     // Start is called before the first frame update
@@ -69,8 +75,19 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         while (_laneZ < _distanceTravelled + spawnDistance)
         {
             // Create a new set in the dictionary to store the lanes at the current z position
-            _spawnedLanes[_laneZ] = new HashSet<GameObject>();
+            _spawnedLanes[_laneZ] = new HashSet<TestLaneScript>();
+            
+            // Create a bool array to store which lanes have obstacles
+            var hasObstacle = new bool[_levelManager.LaneCount];
+            
+            // Loop through each lane and determine if it has an obstacle
+            for (var i = 0; i < _levelManager.LaneCount; i++)
+                hasObstacle[i] = UnityEngine.Random.value < obstacleChance;
 
+            // Check to see if all lanes have an obstacle. If so, remove a random one
+            if (Array.TrueForAll(hasObstacle, x => x))
+                hasObstacle[UnityEngine.Random.Range(0, _levelManager.LaneCount)] = false;
+            
             // Create a cube to represent each lane in the level
             for (var i = 0; i < _levelManager.LaneCount; i++)
             {
@@ -80,16 +97,18 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
                 // Set the parent of the object
                 obj.transform.SetParent(transform);
 
+                // Add a Test Lane Script to the object
+                var laneScript = obj.AddComponent<TestLaneScript>();
+                
+                // Initialize the lane script with the obstacle value
+                laneScript.Initialize(hasObstacle[i]);
+
                 // Set the local position of the object
                 obj.transform.localPosition =
                     new Vector3(_levelManager.GetLanePosition(i).x, -1f, _laneZ);
 
-                // Update the scale of the object
-                obj.transform.localScale =
-                    new Vector3(_levelManager.LaneWidth * 7 / 8, 1, _levelManager.LaneDepth * 7 / 8);
-
                 // Add the object to the spawned lanes
-                _spawnedLanes[_laneZ].Add(obj);
+                _spawnedLanes[_laneZ].Add(laneScript);
             }
 
             // Increase the lane z
@@ -108,12 +127,9 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
             // Check if the key is behind the player
             if (key < _distanceTravelled - spawnDistance)
             {
-                // Loop through each object in the set
+                // Destroy each object in the set
                 foreach (var obj in _spawnedLanes[key])
-                {
-                    // Destroy the object
-                    Destroy(obj);
-                }
+                    Destroy(obj.gameObject);
 
                 // Clear the set
                 _spawnedLanes[key].Clear();
@@ -140,13 +156,13 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
             if (key > largestKey)
                 largestKey = key;
         }
-        
+
         // Get the remainder of the largest key divided by the ResetDistance
         var keyRemainder = largestKey % DISTANCE_RESET;
-        
+
         // Get the difference between the largest key and the remainder
         var keyDifference = largestKey - keyRemainder;
-        
+
         // Move all the lanes forward
         foreach (var key in _spawnedLanes.Keys)
         {

@@ -18,6 +18,8 @@ public class TestLevelManager : MonoBehaviour
     /// How long each lane is block is on the z-axis. 
     /// </summary>
     [SerializeField] private float laneDepth = 4;
+    
+    private TestLevelGenerator _levelGenerator;
 
     #region Getters
 
@@ -29,12 +31,20 @@ public class TestLevelManager : MonoBehaviour
 
     private Vector3 LeftLanePosition => new(-laneCount / 2f * laneWidth + laneWidth / 2, 0, 0);
 
+    public TestLevelGenerator LevelGenerator => _levelGenerator;
+    
     #endregion
 
     private void OnEnable()
     {
         // Force the instance to this
         Instance = this;
+    }
+    
+    private void Awake()
+    {
+        // Get the level generator
+        _levelGenerator = GetComponent<TestLevelGenerator>();
     }
 
     // Start is called before the first frame update
