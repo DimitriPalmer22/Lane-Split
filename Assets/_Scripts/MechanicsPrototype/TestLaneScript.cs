@@ -20,15 +20,18 @@ public class TestLaneScript : MonoBehaviour
         Resize();
     }
 
-    public void Initialize(bool obstacle)
+    public void Initialize(bool obstacle, Material laneMaterial, Material obstacleMaterial)
     {
+        // Set the material of the lane
+        GetComponent<Renderer>().material = laneMaterial;
+
         // Initialize the obstacle if there is one
         _hasObstacle = obstacle;
         if (obstacle)
-            InitializeObstacle();
+            InitializeObstacle(obstacleMaterial);
     }
 
-    private void InitializeObstacle()
+    private void InitializeObstacle(Material obstacleMaterial)
     {
         // Create the obstacle
         _obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -36,6 +39,9 @@ public class TestLaneScript : MonoBehaviour
 
         _obstacle.transform.SetParent(transform);
         _obstacle.transform.localPosition = new Vector3(0, 1, 0);
+
+        // Set the material of the obstacle
+        _obstacle.GetComponent<Renderer>().material = obstacleMaterial;
     }
 
     private void Resize()

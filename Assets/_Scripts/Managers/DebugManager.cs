@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class DebugManager : MonoBehaviour
+public class DebugManager : MonoBehaviour, IDebugManaged
 {
     public static DebugManager Instance { get; private set; }
 
@@ -32,6 +32,9 @@ public class DebugManager : MonoBehaviour
 
         // Initialize the list of debug Items
         _debugItems = new List<IDebugManaged>();
+        
+        // Add this to the debug manager
+        Instance.AddDebugItem(this);
     }
 
     // Start is called before the first frame update
@@ -97,5 +100,10 @@ public class DebugManager : MonoBehaviour
             return;
 
         _debugItems.Remove(item);
+    }
+
+    public string GetDebugText()
+    {
+        return "DEBUG VIEW: PRESS F1 TO TOGGLE\n";
     }
 }

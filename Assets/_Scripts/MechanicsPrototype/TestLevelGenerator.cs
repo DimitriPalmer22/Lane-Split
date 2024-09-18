@@ -19,6 +19,9 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [SerializeField] [Range(0, 1)] private float obstacleChance = 0.25f;
 
+    [Header("Materials")] [SerializeField] private Material laneMaterial;
+    [SerializeField] private Material obstacleMaterial;
+
     // A float to keep track of how far the player has travelled.
     // Used to spawn and destroy lanes
     private float _distanceTravelled;
@@ -103,7 +106,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
                 var laneScript = obj.AddComponent<TestLaneScript>();
 
                 // Initialize the lane script with the obstacle value
-                laneScript.Initialize(hasObstacle[i]);
+                laneScript.Initialize(hasObstacle[i], laneMaterial, obstacleMaterial);
 
                 // Set the local position of the object
                 obj.transform.localPosition =
@@ -146,7 +149,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     {
         _distanceTravelled += distance;
     }
-    
+
     private void MoveEntireLevel()
     {
         // Return if the transform z is less than the reset distance
@@ -199,7 +202,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         Gizmos.color = Color.red;
 
         var forwardAmt = transform.forward * _distanceTravelled;
-        
+
         // Draw the point at which the lanes will be spawned
         Gizmos.DrawLine(
             forwardAmt + _levelManager.GetLanePosition(0) + new Vector3(0, 0, spawnDistance),
