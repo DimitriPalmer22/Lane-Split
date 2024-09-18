@@ -643,6 +643,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1341012953}
   moveSpeed: 8
+  speedIncreaseMultiplier: 1.25
+  levelLength: 10
   laneWidth: 2.5
   laneCount: 4
   laneDepth: 4
@@ -658,7 +660,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ae332c7933fdb46a404a5aa04b5333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnDistance: 16
+  spawnDistance: 128
+  laneScaleX: 0.875
+  laneScaleZ: 1
+  obstacleChance: 0.25
 --- !u!4 &741348023 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6871412629352896865, guid: 3511b51547cc9afd2ac3f16d06215bf9,

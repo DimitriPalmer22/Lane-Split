@@ -14,8 +14,9 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [SerializeField] private float spawnDistance = 16;
 
-    [SerializeField] [Range(0.25f, 1)] private float laneScale = 1;
-    
+    [SerializeField] [Range(0.25f, 1)] private float laneScaleX = 1;
+    [SerializeField] [Range(0.25f, 1)] private float laneScaleZ = 1;
+
     [SerializeField] [Range(0, 1)] private float obstacleChance = 0.25f;
 
     // A float to keep track of how far the player has travelled.
@@ -26,7 +27,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     private Dictionary<float, HashSet<TestLaneScript>> _spawnedLanes;
 
-    public float LaneScale => laneScale;
+    public float LaneScaleX => laneScaleX;
+    public float LaneScaleZ => laneScaleZ;
 
     private void Awake()
     {
@@ -76,10 +78,10 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         {
             // Create a new set in the dictionary to store the lanes at the current z position
             _spawnedLanes[_laneZ] = new HashSet<TestLaneScript>();
-            
+
             // Create a bool array to store which lanes have obstacles
             var hasObstacle = new bool[_levelManager.LaneCount];
-            
+
             // Loop through each lane and determine if it has an obstacle
             for (var i = 0; i < _levelManager.LaneCount; i++)
                 hasObstacle[i] = UnityEngine.Random.value < obstacleChance;
@@ -87,7 +89,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
             // Check to see if all lanes have an obstacle. If so, remove a random one
             if (Array.TrueForAll(hasObstacle, x => x))
                 hasObstacle[UnityEngine.Random.Range(0, _levelManager.LaneCount)] = false;
-            
+
             // Create a cube to represent each lane in the level
             for (var i = 0; i < _levelManager.LaneCount; i++)
             {
@@ -99,7 +101,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
                 // Add a Test Lane Script to the object
                 var laneScript = obj.AddComponent<TestLaneScript>();
-                
+
                 // Initialize the lane script with the obstacle value
                 laneScript.Initialize(hasObstacle[i]);
 
@@ -181,8 +183,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     public string GetDebugText()
     {
-        return $"Lane Z: {_laneZ}\n" +
-               $"Distance Travelled: {_distanceTravelled}\n";
+        return $"Distance Travelled: {_distanceTravelled}\n";
     }
 
     private void OnDrawGizmos()

@@ -41,8 +41,8 @@ public class TestLaneScript : MonoBehaviour
     private void Resize()
     {
         // Resize the lane to the correct size
-        var scaleX = TestLevelManager.Instance.LaneWidth * TestLevelManager.Instance.LevelGenerator.LaneScale;
-        var scaleZ = TestLevelManager.Instance.LaneDepth * TestLevelManager.Instance.LevelGenerator.LaneScale;
+        var scaleX = TestLevelManager.Instance.LaneWidth * TestLevelManager.Instance.LevelGenerator.LaneScaleX;
+        var scaleZ = TestLevelManager.Instance.LaneDepth * TestLevelManager.Instance.LevelGenerator.LaneScaleZ;
 
         transform.localScale = new Vector3(
             scaleX,

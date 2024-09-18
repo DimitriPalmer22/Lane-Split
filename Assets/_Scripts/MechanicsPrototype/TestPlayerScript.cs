@@ -9,6 +9,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private String _debugText = "";
 
     private int _lane;
+    
+    public int Lane => _lane;
 
     // Start is called before the first frame update
     void Start()
