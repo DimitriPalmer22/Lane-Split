@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: StylizedContrail
+  m_Name: StylizedContrail 1
   m_Shader: {fileID: -6465566751694194690, guid: 98354006217076f438b3a7b39a3510dc,
     type: 3}
   m_Parent: {fileID: 0}
@@ -42,12 +42,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DissolveScale: 100
+    - _DissolveScale: 35
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _Color01: {r: 1, g: 0, b: 0, a: 0.69411767}
-    - _Color02: {r: 0.1319868, g: 0.07868272, b: 0.9698113, a: 0}
+    - _Color01: {r: 0.7169812, g: 0.091313645, b: 0.091313645, a: 0.70980394}
+    - _Color02: {r: 0.2264151, g: 0, b: 0.011077881, a: 1}
     - _DissolveSpeed: {r: -0.5, g: 0, b: 0, a: 0}
     - _MainTexSpeed: {r: -0.1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
