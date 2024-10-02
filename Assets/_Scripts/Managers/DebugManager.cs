@@ -14,6 +14,8 @@ public class DebugManager : MonoBehaviour, IDebugManaged
     [SerializeField] private TMP_Text debugText;
 
     private List<IDebugManaged> _debugItems;
+    
+    public bool IsDebug => _isDebug;
 
     private void Awake()
     {
