@@ -12,6 +12,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private bool _isAlive = true;
 
     [SerializeField] private float maxBoost = 10;
+
+    [SerializeField] private float boostMultiplier = 2f;
+
     private float _currentBoost;
 
     private bool _isBoosting;
@@ -25,7 +28,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     public float BoostPercentage => Mathf.Clamp01(_currentBoost / maxBoost);
 
+    public float BoostMultiplier => _isBoosting ? boostMultiplier : 1;
+
     private bool IsVulnerable => !_isBoosting;
+
+    public float CurrentMoveSpeed => TestLevelManager.Instance.MoveSpeed * BoostMultiplier;
 
     #endregion
 
@@ -66,6 +73,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Update the position of the player
         SetLanePosition();
+
+        // Update boost
+        UpdateBoost();
     }
 
     private void MovePlayer()
@@ -74,7 +84,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (!_isAlive)
             return;
 
-        var moveAmount = TestLevelManager.Instance.MoveSpeed * Time.deltaTime;
+        var moveAmount = CurrentMoveSpeed * Time.deltaTime;
 
         // Move the player forward
         transform.position += transform.forward * moveAmount;
@@ -123,7 +133,36 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (!_isAlive)
             return;
 
-        Debug.Log("Boosting");
+        // Skip if the player is already boosting
+        if (_isBoosting)
+            return;
+
+        // If the boost isn't full, return
+        if (BoostPercentage < 1)
+            return;
+
+        // Set the boost flag to true
+        _isBoosting = true;
+    }
+
+    private void UpdateBoost()
+    {
+        // Return if the player is dead
+        if (!_isAlive)
+            return;
+
+        // Return if the player isn't boosting
+        // Decrease the boost
+        if (_isBoosting)
+            AddBoost(-1 * Time.deltaTime);
+
+        // Add boost
+        else
+            AddBoost(1 * Time.deltaTime);
+
+        // If the boost is empty, set the boost flag to false
+        if (_currentBoost <= 0)
+            _isBoosting = false;
     }
 
     private void ChangeLanes(int modifier)
@@ -183,20 +222,20 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
                 var random = UnityEngine.Random.Range(-1f, 1f);
 
                 // Create a new Vector3 for launch Angle
-                var launchAngle = new Vector3(
-                );
+                // var launchAngle = Vector3.up + transform.forward + Vector3.right * random;
+                var launchAngle = Vector3.up;
 
+                // Set the rb to use gravity
+                rb.useGravity = true;
 
                 // Add a force to the obstacle
-                rb.AddForce(Vector3.forward * 1000, ForceMode.Impulse);
+                rb.AddForce(launchAngle * 1000, ForceMode.Impulse);
             }
         }
     }
 
     private void KillPlayer()
     {
-        Debug.Log("Killed Player!");
-
         // Set the player to dead
         _isAlive = false;
     }

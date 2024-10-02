@@ -7,6 +7,7 @@ public class TestUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text infoText;
     [SerializeField] private TMP_Text gameOverText;
+    [SerializeField] private TMP_Text boostReadyText;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,19 @@ public class TestUI : MonoBehaviour
 
         // Update the game over text
         UpdateGameOverText();
+
+        // Update the boost ready text
+        UpdateBoostReadyText();
+    }
+
+    private void UpdateBoostReadyText()
+    {
+        // Return if the boost ready text is null
+        if (boostReadyText == null)
+            return;
+
+        // Set the text to active if the player has enough boost
+        boostReadyText.gameObject.SetActive(LevelManager.Instance.Player.BoostPercentage >= 1);
     }
 
     private void UpdateInfoText()
