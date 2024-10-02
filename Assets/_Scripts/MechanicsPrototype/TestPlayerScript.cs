@@ -43,6 +43,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Remove this object from the debug manager
         InputManager.Instance.OnSwipe -= MoveOnSwipe;
         InputManager.Instance.PlayerControls.Gameplay.Boost.performed -= OnBoostPerformed;
+        InputManager.Instance.OnSwipe -= BoostOnSwipe;
 
         // Remove this object from the debug manager
         DebugManager.Instance.RemoveDebugItem(this);
@@ -83,13 +84,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (!_isAlive)
             return;
 
-        // Boost the player if they swipe up
-        if (direction == InputManager.SwipeDirection.Up)
-        {
-            Boost();
-            return;
-        }
-
         // Update the lane based on the swipe direction
         var modifier = direction switch
         {
@@ -107,12 +101,20 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     }
 
 
-    private void BoostOnSwipe(Vector2 arg1, InputManager.SwipeDirection arg2)
+    private void BoostOnSwipe(Vector2 swipe, InputManager.SwipeDirection direction)
     {
+        // Boost the player if they swipe up
+        if (direction != InputManager.SwipeDirection.Up)
+            return;
+        
+        Boost();
     }
 
     private void Boost()
     {
+        if (!_isAlive)
+            return;
+
         Debug.Log("Boosting");
     }
 
