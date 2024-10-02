@@ -18,12 +18,17 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private Rigidbody rb;
     private bool isDrifting;
+   
     public float speed = 10.0f;
     private float driftRotationSpeed = 100.0f; // Increase rotation speed for a tighter drift
     private float driftForceMultiplier = 1.5f; // Extra force to simulate tighter control
 
     private float minRotation = 0f;
     private float maxRotation = 360f;
+
+    //reference to playercontrols for drifting test
+    private PlayerControls inputActions; // Reference to input actions
+
 
 
     #region Getters
@@ -34,6 +39,13 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     #endregion
 
     // Start is called before the first frame update
+    private void Awake()
+    {
+        // Initialize input actions
+        inputActions = new PlayerControls();
+        inputActions.Gameplay.drift.performed += ctx => StartDrift(); // Subscribe to drift action
+        inputActions.Gameplay.drift.canceled += ctx => StopDrift();   // Subscribe to stop drift action
+    }
     void Start()
     {
         // Initialize the input
@@ -202,6 +214,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         return $"Player Alive?: {_isAlive}\n" +
                $"Boost: {_currentBoost} / {maxBoost}";
     }
+private void DriftController(){
+
 
     if (isDrifting)
     {
@@ -214,6 +228,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Optionally apply additional force for drifting effects
         Vector3 driftForce = transform.right * driftForceMultiplier;
         rb.AddForce(driftForce, ForceMode.Acceleration);
+    }
     }
 
     private void StartDrift()
