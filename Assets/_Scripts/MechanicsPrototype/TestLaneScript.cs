@@ -70,6 +70,11 @@ public class TestLaneScript : MonoBehaviour
 
         // Add an obstacleScript to the obstacle
         _obstacle = obstacle.AddComponent<ObstacleScript>();
+        
+        // Add a rigidbody to the obstacle
+        var rb = obstacle.AddComponent<Rigidbody>();
+        rb.useGravity = false;
+        
         _obstacle.Initialize(this);
     }
 

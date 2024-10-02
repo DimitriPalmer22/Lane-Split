@@ -14,10 +14,18 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     [SerializeField] private float maxBoost = 10;
     private float _currentBoost;
 
+    private bool _isBoosting;
+
     #region Getters
 
     public int Lane => _lane;
     public bool IsAlive => _isAlive;
+
+    public bool IsBoosting => _isBoosting;
+
+    public float BoostPercentage => Mathf.Clamp01(_currentBoost / maxBoost);
+
+    private bool IsVulnerable => !_isBoosting;
 
     #endregion
 
@@ -106,7 +114,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Boost the player if they swipe up
         if (direction != InputManager.SwipeDirection.Up)
             return;
-        
+
         Boost();
     }
 
@@ -162,7 +170,26 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (other.CompareTag("Obstacle"))
         {
             Debug.Log($"Player collided with: {other.name} ({other.tag})");
-            KillPlayer();
+
+            if (IsVulnerable)
+                KillPlayer();
+
+            else if (_isBoosting)
+            {
+                // Get the rigidbody of the obstacle
+                var rb = other.GetComponent<Rigidbody>();
+
+                // Randomize a float between 0 and 1
+                var random = UnityEngine.Random.Range(-1f, 1f);
+
+                // Create a new Vector3 for launch Angle
+                var launchAngle = new Vector3(
+                );
+
+
+                // Add a force to the obstacle
+                rb.AddForce(Vector3.forward * 1000, ForceMode.Impulse);
+            }
         }
     }
 
@@ -193,6 +220,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     public string GetDebugText()
     {
         return $"Player Alive?: {_isAlive}\n" +
-               $"Boost: {_currentBoost} / {maxBoost}";
+               $"Boost: {_currentBoost} / {maxBoost} ({BoostPercentage})\n" +
+               $"Is Boosting: {_isBoosting}\n";
     }
 }
