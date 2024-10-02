@@ -14,6 +14,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     // Used to determine if more lanes should be spawned
     private float _laneZ;
 
+    [SerializeField] private bool hideLaneBlocks = true;
+
     [SerializeField] private float spawnDistance = 16;
 
     [SerializeField] [Range(0.25f, 1)] private float laneScaleX = 1;
@@ -38,6 +40,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     public Dictionary<float, HashSet<TestLaneScript>> SpawnedLanes => _spawnedLanes;
 
+
+    public bool HideLaneBlocks => hideLaneBlocks && !DebugManager.Instance.IsDebug;
 
     private void Awake()
     {

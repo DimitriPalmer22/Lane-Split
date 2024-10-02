@@ -989,6 +989,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ae332c7933fdb46a404a5aa04b5333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hideLaneBlocks: 1
   spawnDistance: 96
   laneScaleX: 0.875
   laneScaleZ: 1

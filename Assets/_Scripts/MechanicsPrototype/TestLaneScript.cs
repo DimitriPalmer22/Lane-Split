@@ -7,12 +7,17 @@ public class TestLaneScript : MonoBehaviour
     private bool _hasObstacle;
     private ObstacleScript _obstacle;
 
+    private Renderer _renderer;
+
     public int LaneNumber => _laneNumber;
     public bool HasObstacle => _hasObstacle;
     public ObstacleScript Obstacle => _obstacle;
 
     private void Awake()
     {
+        // Get the renderer of the lane
+        _renderer = GetComponent<Renderer>();
+        
         Resize();
     }
 
@@ -22,8 +27,19 @@ public class TestLaneScript : MonoBehaviour
 
     private void Update()
     {
+        // Resize the lane
         Resize();
+
+        // Update the visibility of the lane
+        UpdateVisibility();
     }
+
+    private void UpdateVisibility()
+    {
+        // Set the visibility of the lane
+        _renderer.enabled = !TestLevelManager.Instance.LevelGenerator.HideLaneBlocks;
+    }
+
 
     public void Initialize(int laneNumber, bool obstacle, Material laneMaterial, Material obstacleMaterial)
     {

@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 public class TestPlayerScript : MonoBehaviour, IDebugManaged
 {
     private int _lane;
-    
+
     private bool _isAlive = true;
 
     [SerializeField] private float maxBoost = 10;
@@ -27,6 +27,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Initialize the input
         InputManager.Instance.OnSwipe += MoveOnSwipe;
         InputManager.Instance.PlayerControls.Gameplay.Boost.performed += OnBoostPerformed;
+        InputManager.Instance.OnSwipe += BoostOnSwipe;
 
         // Add this object to the debug manager
         DebugManager.Instance.AddDebugItem(this);
@@ -35,7 +36,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         _lane = 0;
         SetLanePosition();
     }
-
 
 
     private void OnDestroy()
@@ -82,7 +82,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Return if the player is dead
         if (!_isAlive)
             return;
-        
+
         // Boost the player if they swipe up
         if (direction == InputManager.SwipeDirection.Up)
         {
@@ -104,6 +104,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private void OnBoostPerformed(InputAction.CallbackContext context)
     {
         Boost();
+    }
+
+
+    private void BoostOnSwipe(Vector2 arg1, InputManager.SwipeDirection arg2)
+    {
     }
 
     private void Boost()
@@ -134,10 +139,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Get all obstacles within near miss distance
         var validObstacles = allObstacles
-        .Where(
-            n => Vector3.Distance(n.transform.position, transform.position) <= TestLevelManager.Instance.NearMissSize
-        );
-               // .Where(n => n.TestLaneScript.LaneNumber == _lane || n.TestLaneScript.LaneNumber == oldLane)
+            .Where(
+                n => Vector3.Distance(n.transform.position, transform.position) <=
+                     TestLevelManager.Instance.NearMissSize
+            );
+        // .Where(n => n.TestLaneScript.LaneNumber == _lane || n.TestLaneScript.LaneNumber == oldLane)
         foreach (var obstacle in validObstacles)
             Debug.Log($"Near Missed: {obstacle} {obstacle.TestLaneScript.LaneNumber}");
     }
@@ -161,7 +167,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private void KillPlayer()
     {
         Debug.Log("Killed Player!");
-        
+
         // Set the player to dead
         _isAlive = false;
     }
