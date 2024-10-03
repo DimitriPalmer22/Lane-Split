@@ -19,6 +19,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private bool _isBoosting;
 
+    public event Action<TestPlayerScript> OnBoostStart;
+
+    public event Action<TestPlayerScript> OnBoostEnd;
+
+
     #region Getters
 
     public int Lane => _lane;
@@ -143,6 +148,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Set the boost flag to true
         _isBoosting = true;
+
+        // Invoke the OnBoostStart event
+        OnBoostStart?.Invoke(this);
     }
 
     private void UpdateBoost()
@@ -162,7 +170,13 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // If the boost is empty, set the boost flag to false
         if (_currentBoost <= 0)
+        {
+            // If the player was boosting, invoke the OnBoostEnd event
+            if (_isBoosting)
+                OnBoostEnd?.Invoke(this);
+
             _isBoosting = false;
+        }
     }
 
     private void ChangeLanes(int modifier)

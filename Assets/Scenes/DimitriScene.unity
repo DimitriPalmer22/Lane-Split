@@ -1672,6 +1672,7 @@ GameObject:
   - component: {fileID: 1251593808}
   - component: {fileID: 1251593811}
   - component: {fileID: 1251593810}
+  - component: {fileID: 1251593812}
   m_Layer: 0
   m_Name: Vcam
   m_TagString: Untagged
@@ -1789,6 +1790,21 @@ MonoBehaviour:
   m_Offset: {x: 0, y: 2, z: 0}
   m_ApplyAfter: 1
   m_PreserveComposition: 0
+--- !u!114 &1251593812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251593807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 115842eb86ba5254da3dcf0ec1e13576, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultFOV: 80
+  boostFOVMultiplier: 1.25
+  boostFOVTransitionTime: 0.125
 --- !u!114 &1341012953 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3063258729448079965, guid: 3511b51547cc9afd2ac3f16d06215bf9,
