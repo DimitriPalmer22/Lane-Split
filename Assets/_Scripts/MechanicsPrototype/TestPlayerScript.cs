@@ -5,30 +5,23 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
-
 public class TestPlayerScript : MonoBehaviour, IDebugManaged
 {
     private int _lane;
-    
+
     private bool _isAlive = true;
 
     [SerializeField] private float maxBoost = 10;
+
+    [SerializeField] private float boostMultiplier = 2f;
+
     private float _currentBoost;
 
-    private Rigidbody rb;
-    private bool isDrifting;
-   
-    public float speed = 10.0f;
-    private float driftRotationSpeed = 100.0f; // Increase rotation speed for a tighter drift
-    private float driftForceMultiplier = 1.5f; // Extra force to simulate tighter control
+    private bool _isBoosting;
 
-    private float minRotation = 0f;
-    private float maxRotation = 360f;
+    public event Action<TestPlayerScript> OnBoostStart;
 
-    //reference to playercontrols for drifting test
-    private PlayerControls inputActions; // Reference to input actions
-
+    public event Action<TestPlayerScript> OnBoostEnd;
 
 
     #region Getters
@@ -36,27 +29,28 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     public int Lane => _lane;
     public bool IsAlive => _isAlive;
 
+    public bool IsBoosting => _isBoosting;
+
+    public float BoostPercentage => Mathf.Clamp01(_currentBoost / maxBoost);
+
+    public float BoostMultiplier => _isBoosting ? boostMultiplier : 1;
+
+    private bool IsVulnerable => !_isBoosting;
+
+    public float CurrentMoveSpeed => TestLevelManager.Instance.MoveSpeed * BoostMultiplier;
+
     #endregion
 
     // Start is called before the first frame update
-    private void Awake()
-    {
-        // Initialize input actions
-        inputActions = new PlayerControls();
-        inputActions.Gameplay.drift.performed += ctx => StartDrift(); // Subscribe to drift action
-        inputActions.Gameplay.drift.canceled += ctx => StopDrift();   // Subscribe to stop drift action
-    }
     void Start()
     {
         // Initialize the input
         InputManager.Instance.OnSwipe += MoveOnSwipe;
         InputManager.Instance.PlayerControls.Gameplay.Boost.performed += OnBoostPerformed;
+        InputManager.Instance.OnSwipe += BoostOnSwipe;
 
         // Add this object to the debug manager
         DebugManager.Instance.AddDebugItem(this);
-        // Get the rigidbody component
-        rb = GetComponent<Rigidbody>();
-
 
         // Set the player to the far left lane
         _lane = 0;
@@ -64,12 +58,12 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     }
 
 
-
     private void OnDestroy()
     {
         // Remove this object from the debug manager
         InputManager.Instance.OnSwipe -= MoveOnSwipe;
         InputManager.Instance.PlayerControls.Gameplay.Boost.performed -= OnBoostPerformed;
+        InputManager.Instance.OnSwipe -= BoostOnSwipe;
 
         // Remove this object from the debug manager
         DebugManager.Instance.RemoveDebugItem(this);
@@ -84,6 +78,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Update the position of the player
         SetLanePosition();
+
+        // Update boost
+        UpdateBoost();
     }
 
     private void MovePlayer()
@@ -92,7 +89,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (!_isAlive)
             return;
 
-        var moveAmount = TestLevelManager.Instance.MoveSpeed * Time.deltaTime;
+        var moveAmount = CurrentMoveSpeed * Time.deltaTime;
 
         // Move the player forward
         transform.position += transform.forward * moveAmount;
@@ -109,13 +106,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Return if the player is dead
         if (!_isAlive)
             return;
-        
-        // Boost the player if they swipe up
-        if (direction == InputManager.SwipeDirection.Up)
-        {
-            Boost();
-            return;
-        }
 
         // Update the lane based on the swipe direction
         var modifier = direction switch
@@ -133,9 +123,60 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         Boost();
     }
 
+
+    private void BoostOnSwipe(Vector2 swipe, InputManager.SwipeDirection direction)
+    {
+        // Boost the player if they swipe up
+        if (direction != InputManager.SwipeDirection.Up)
+            return;
+
+        Boost();
+    }
+
     private void Boost()
     {
-        Debug.Log("Boosting");
+        if (!_isAlive)
+            return;
+
+        // Skip if the player is already boosting
+        if (_isBoosting)
+            return;
+
+        // If the boost isn't full, return
+        if (BoostPercentage < 1)
+            return;
+
+        // Set the boost flag to true
+        _isBoosting = true;
+
+        // Invoke the OnBoostStart event
+        OnBoostStart?.Invoke(this);
+    }
+
+    private void UpdateBoost()
+    {
+        // Return if the player is dead
+        if (!_isAlive)
+            return;
+
+        // Return if the player isn't boosting
+        // Decrease the boost
+        if (_isBoosting)
+            AddBoost(-1 * Time.deltaTime);
+
+        // Add boost
+        else
+            AddBoost(1 * Time.deltaTime);
+
+        // If the boost is empty, set the boost flag to false
+        if (_currentBoost <= 0)
+        {
+            // If the player was boosting, invoke the OnBoostEnd event
+            if (_isBoosting)
+                OnBoostEnd?.Invoke(this);
+
+            _isBoosting = false;
+        }
     }
 
     private void ChangeLanes(int modifier)
@@ -161,10 +202,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Get all obstacles within near miss distance
         var validObstacles = allObstacles
-        .Where(
-            n => Vector3.Distance(n.transform.position, transform.position) <= TestLevelManager.Instance.NearMissSize
-        );
-               // .Where(n => n.TestLaneScript.LaneNumber == _lane || n.TestLaneScript.LaneNumber == oldLane)
+            .Where(
+                n => Vector3.Distance(n.transform.position, transform.position) <=
+                     TestLevelManager.Instance.NearMissSize
+            );
+        // .Where(n => n.TestLaneScript.LaneNumber == _lane || n.TestLaneScript.LaneNumber == oldLane)
         foreach (var obstacle in validObstacles)
             Debug.Log($"Near Missed: {obstacle} {obstacle.TestLaneScript.LaneNumber}");
     }
@@ -181,14 +223,33 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (other.CompareTag("Obstacle"))
         {
             Debug.Log($"Player collided with: {other.name} ({other.tag})");
-            KillPlayer();
+
+            if (IsVulnerable)
+                KillPlayer();
+
+            else if (_isBoosting)
+            {
+                // Get the rigidbody of the obstacle
+                var rb = other.GetComponent<Rigidbody>();
+
+                // Randomize a float between 0 and 1
+                var random = UnityEngine.Random.Range(-1f, 1f);
+
+                // Create a new Vector3 for launch Angle
+                // var launchAngle = Vector3.up + transform.forward + Vector3.right * random;
+                var launchAngle = Vector3.up;
+
+                // Set the rb to use gravity
+                rb.useGravity = true;
+
+                // Add a force to the obstacle
+                rb.AddForce(launchAngle * 1000, ForceMode.Impulse);
+            }
         }
     }
 
     private void KillPlayer()
     {
-        Debug.Log("Killed Player!");
-        
         // Set the player to dead
         _isAlive = false;
     }
@@ -212,43 +273,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     public string GetDebugText()
     {
         return $"Player Alive?: {_isAlive}\n" +
-               $"Boost: {_currentBoost} / {maxBoost}";
+               $"Boost: {_currentBoost} / {maxBoost} ({BoostPercentage})\n" +
+               $"Is Boosting: {_isBoosting}\n";
     }
-private void DriftController(){
-
-
-    if (isDrifting)
-    {
-        Vector3 currentRotation = transform.eulerAngles;
-        currentRotation.y = Mathf.Clamp(currentRotation.y,minRotation,maxRotation);
-        transform.eulerAngles = currentRotation;
-        // Rotate the game object while drifting
-        transform.Rotate(0, driftRotationSpeed * Time.fixedDeltaTime, 0);
-
-        // Optionally apply additional force for drifting effects
-        Vector3 driftForce = transform.right * driftForceMultiplier;
-        rb.AddForce(driftForce, ForceMode.Acceleration);
-    }
-    }
-
-    private void StartDrift()
-    {
-        if (CanDrift()) // Check if the player is in a drift zone
-        {
-            isDrifting = true;
-        }
-    }
-
-    private void StopDrift()
-    {
-        isDrifting = false;
-    }
-
-
-    private bool CanDrift()
-    {
-        return true; // Placeholder
-    }
-
-
 }

@@ -47,7 +47,7 @@ public class CameraSpeedRumble : MonoBehaviour, IDebugManaged
     private void SetShake()
     {
         // Get the current speed
-        var speed = TestLevelManager.Instance.MoveSpeed;
+        var speed = LevelManager.Instance.Player.CurrentMoveSpeed;
 
         var minMaxDifference = maxSpeed - minSpeed;
         var relativeSpeed = speed - minSpeed;
