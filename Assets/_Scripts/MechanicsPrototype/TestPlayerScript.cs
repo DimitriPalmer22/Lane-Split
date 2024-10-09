@@ -19,6 +19,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private bool _isBoosting;
 
+    public Transform[] wheels;
+
     public event Action<TestPlayerScript> OnBoostStart;
 
     public event Action<TestPlayerScript> OnBoostEnd;
@@ -75,6 +77,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     {
         // Move the player
         MovePlayer();
+        
+        //RotateWheels
+        RotateWheels();
 
         // Update the position of the player
         SetLanePosition();
@@ -96,6 +101,16 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Add the distance travelled to the level generator
         TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
+    }
+    
+    private void RotateWheels()
+    {
+        // Rotate the wheels
+        foreach (var wheel in wheels)
+        {
+            // rotate the wheel based on speed
+            wheel.Rotate(Vector3.right, CurrentMoveSpeed*360 * Time.deltaTime);
+        }
     }
 
 
