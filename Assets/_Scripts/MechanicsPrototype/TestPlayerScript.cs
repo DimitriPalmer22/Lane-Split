@@ -25,6 +25,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     public event Action<TestPlayerScript> OnBoostEnd;
 
+    public event Action OnRampStart;
+    
+    //*Reference to the car ramp handler & sound manager scripts
+    [SerializeField] private CarRampHandler carRampHandler;
+    [SerializeField] private SoundManager soundManager;
 
     #region Getters
 
@@ -58,8 +63,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         _lane = 0;
         SetLanePosition();
     }
-
-
+    
     private void OnDestroy()
     {
         // Remove this object from the debug manager
@@ -95,17 +99,31 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             return;
 
         var moveAmount = CurrentMoveSpeed * Time.deltaTime;
-
-        // Move the player forward
+        if (carRampHandler.isRamping)
+        {
+            Time.timeScale = 0.5f;
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
+        //Move the player forward
         transform.position += transform.forward * moveAmount;
 
         // Add the distance travelled to the level generator
         TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
     }
+    //*Trigger the ramp start event when the player enters the ramp
+    public void TriggerRampStart()
+    {
+        carRampHandler.isRamping = true;
+        OnRampStart?.Invoke();
+    }
     
+    //*Rotate the wheels
     private void RotateWheels()
     {
-        // Rotate the wheels
+        // Rotate the wheel in wheels array 
         foreach (var wheel in wheels)
         {
             // rotate the wheel based on speed
