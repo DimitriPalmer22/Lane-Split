@@ -25,6 +25,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [Header("Materials")] [SerializeField] private Material laneMaterial;
     [SerializeField] private Material obstacleMaterial;
+    
+    [Header("Vehicles")] [SerializeField] private GameObject[] vehicles;
 
     // A float to keep track of how far the player has travelled.
     // Used to spawn and destroy lanes
