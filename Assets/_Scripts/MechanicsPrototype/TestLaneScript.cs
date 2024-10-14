@@ -17,8 +17,8 @@ public class TestLaneScript : MonoBehaviour
     {
         // Get the renderer of the lane
         _renderer = GetComponent<Renderer>();
-        
-        Resize();
+
+        // Resize();
     }
 
     private void Start()
@@ -27,8 +27,8 @@ public class TestLaneScript : MonoBehaviour
 
     private void Update()
     {
-        // Resize the lane
-        Resize();
+        // // Resize the lane
+        // Resize();
 
         // Update the visibility of the lane
         UpdateVisibility();
@@ -41,7 +41,10 @@ public class TestLaneScript : MonoBehaviour
     }
 
 
-    public void Initialize(int laneNumber, bool obstacle, Material laneMaterial, Material obstacleMaterial)
+    public void Initialize(
+        int laneNumber, bool obstacle, GameObject obstaclePrefab,
+        Material laneMaterial, Material obstacleMaterial
+    )
     {
         // Set the lane number
         _laneNumber = laneNumber;
@@ -52,29 +55,28 @@ public class TestLaneScript : MonoBehaviour
         // Initialize the obstacle if there is one
         _hasObstacle = obstacle;
         if (obstacle)
-            InitializeObstacle(obstacleMaterial);
+            InitializeObstacle(obstaclePrefab, obstacleMaterial);
     }
 
-    private void InitializeObstacle(Material obstacleMaterial)
+    private void InitializeObstacle(GameObject obstaclePrefab, Material obstacleMaterial)
     {
         // Create the obstacle
-        var obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        obstacle.name = "Obstacle";
-        obstacle.tag = "Obstacle";
+        // var obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        var obstacle = Instantiate(obstaclePrefab, transform, true);
+        obstacle.name += "Obstacle";
 
-        obstacle.transform.SetParent(transform);
         obstacle.transform.localPosition = new Vector3(0, 1, 0);
 
         // Set the material of the obstacle
-        obstacle.GetComponent<Renderer>().material = obstacleMaterial;
+        // obstacle.GetComponent<Renderer>().material = obstacleMaterial;
 
         // Add an obstacleScript to the obstacle
         _obstacle = obstacle.AddComponent<ObstacleScript>();
-        
+
         // Add a rigidbody to the obstacle
-        var rb = obstacle.AddComponent<Rigidbody>();
-        rb.useGravity = false;
-        
+        // var rb = obstacle.AddComponent<Rigidbody>();
+        // rb.useGravity = false;
+
         _obstacle.Initialize(this);
     }
 

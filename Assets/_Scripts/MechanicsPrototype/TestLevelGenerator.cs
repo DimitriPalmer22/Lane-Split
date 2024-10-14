@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(TestLevelManager))]
@@ -25,8 +26,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [Header("Materials")] [SerializeField] private Material laneMaterial;
     [SerializeField] private Material obstacleMaterial;
-    
-    [Header("Vehicles")] [SerializeField] private GameObject[] vehicles;
+
+    [Header("Vehicles")] [SerializeField] private SpawnWeight[] vehicles;
 
     // A float to keep track of how far the player has travelled.
     // Used to spawn and destroy lanes
@@ -34,6 +35,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
 
     private Dictionary<float, HashSet<TestLaneScript>> _spawnedLanes;
+
+    #region Getters
 
     public float LaneScaleX => laneScaleX;
     public float LaneScaleZ => laneScaleZ;
@@ -44,6 +47,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
 
     public bool HideLaneBlocks => hideLaneBlocks && !DebugManager.Instance.IsDebug;
+
+    #endregion
 
     private void Awake()
     {
@@ -129,8 +134,44 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
                 var objCollider = obj.GetComponent<Collider>();
                 objCollider.isTrigger = true;
 
+                // Select a random vehicle from the vehicle list as an obstacle
+                GameObject obstacle = null;
+
+
+                // If the current lane has an obstacle, spawn it
+                if (hasObstacle[laneNumber])
+                {
+                    // Get the total spawn weight
+                    var totalWeight = vehicles.Sum(n => n.Weight);
+
+                    // Get a random value between 0 and the total weight
+                    var randomValue = UnityEngine.Random.Range(0, totalWeight);
+
+                    // Loop through each vehicle to get the selected vehicle
+                    int vehicleIndex;
+                    for (vehicleIndex = 0; vehicleIndex < vehicles.Length; vehicleIndex++)
+                    {
+                        // Subtract the weight of the current vehicle from the random value
+                        randomValue -= vehicles[vehicleIndex].Weight;
+
+                        // If the random value is less than 0, select the current vehicle
+                        if (randomValue <= 0)
+                            break;
+                    }
+
+                    // Clamp the vehicle index to the length of the vehicles array
+                    vehicleIndex = Mathf.Clamp(vehicleIndex, 0, vehicles.Length - 1);
+
+                    // Set the obstacle to the selected vehicle's prefab
+                    obstacle = vehicles[vehicleIndex].Prefab;
+
+                    // Instantiate the selected vehicle as the obstacle
+                    // obstacle = Instantiate(vehicles[vehicleIndex].Prefab, obj.transform);
+                    // obstacle.transform.localPosition = new Vector3(0, 0.5f, 0);
+                }
+
                 // Initialize the lane script with the obstacle value
-                laneScript.Initialize(laneNumber, hasObstacle[laneNumber], laneMaterial, obstacleMaterial);
+                laneScript.Initialize(laneNumber, hasObstacle[laneNumber], obstacle, laneMaterial, obstacleMaterial);
 
                 // Set the local position of the object
                 obj.transform.localPosition =
