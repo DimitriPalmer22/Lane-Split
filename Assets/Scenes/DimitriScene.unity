@@ -2833,6 +2833,11 @@ PrefabInstance:
       propertyPath: wheels.Array.data[3]
       value: 
       objectReference: {fileID: 1966123058}
+    - target: {fileID: 4367897209618239337, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ab64c4e4074788544a6bf79661bd3825, type: 2}
     - target: {fileID: 4459601881631737588, guid: 3511b51547cc9afd2ac3f16d06215bf9,
         type: 3}
       propertyPath: m_LocalScale.x
