@@ -7,14 +7,17 @@ public class CarRampHandler : MonoBehaviour
 {
     //serialized fields
     [SerializeField] [Range(-3, 20)] private float descentSpeed = 3f; // Descent speed of the car after jumping
-    [SerializeField] [Range(1, 20)] private float descentDuration = 3f; // Duration of the descent
-    [SerializeField] [Range(1, 20)] private float airTime = 3f; // Time the car spends in the air after hitting the ramp
+    [SerializeField] [Range(0.01f, 20)] private float descentDuration = 3f; // Duration of the descent
+    [SerializeField] [Range(0.01f, 20)] private float airTime = 3f; // Time the car spends in the air after hitting the ramp
+
+    [SerializeField] private AnimationCurve fallCurve;
+
     public event Action OnRampEnter;
 
     public float rampForce = 15f;
-    public bool isRamping = false;
     private Rigidbody _rb;
 
+    public bool IsRamping { get; private set; }
 
     private void Start()
     {
@@ -29,9 +32,13 @@ public class CarRampHandler : MonoBehaviour
         if (!other.CompareTag("Ramp"))
             return;
 
+        // Check if the car is already ramping
+        if (IsRamping)
+            return;
+
         Debug.Log("Car hit the truck ramp!");
 
-        isRamping = true;
+        IsRamping = true;
 
         //apply force to simulate ramp
         var rampDirection = transform.up * rampForce + transform.forward * 1.5f;
@@ -58,6 +65,8 @@ public class CarRampHandler : MonoBehaviour
     //// Coroutine to handle the smooth descent after the jump
     private IEnumerator SmoothDescent(float speed, float duration)
     {
+        Debug.Log("Started Descent");
+
         var elapsedTime = 0f;
         var startY = transform.position.y;
         var minY = 0f;
@@ -77,6 +86,6 @@ public class CarRampHandler : MonoBehaviour
         // Ensure the final Y value is set correctly
         transform.position = new Vector3(transform.position.x, 0, transform.position.z);
 
-        isRamping = false; // Reset ramping state
+        IsRamping = false; // Reset ramping state
     }
 }

@@ -26,7 +26,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     public event Action<TestPlayerScript> OnBoostEnd;
 
     public event Action OnRampStart;
-    
+
     //*Reference to the car ramp handler & sound manager scripts
     [SerializeField] private CarRampHandler carRampHandler;
     [SerializeField] private SoundManager soundManager;
@@ -63,7 +63,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         _lane = 0;
         SetLanePosition();
     }
-    
+
     private void OnDestroy()
     {
         // Remove this object from the debug manager
@@ -81,7 +81,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     {
         // Move the player
         MovePlayer();
-        
+
         //RotateWheels
         RotateWheels();
 
@@ -99,27 +99,25 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             return;
 
         var moveAmount = CurrentMoveSpeed * Time.deltaTime;
-        if (carRampHandler.isRamping)
-        {
+
+        if (carRampHandler.IsRamping)
             Time.timeScale = 0.5f;
-        }
         else
-        {
             Time.timeScale = 1;
-        }
+
         //Move the player forward
         transform.position += transform.forward * moveAmount;
 
         // Add the distance travelled to the level generator
         TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
     }
-    //*Trigger the ramp start event when the player enters the ramp
+
+    // Trigger the ramp start event when the player enters the ramp
     public void TriggerRampStart()
     {
-        carRampHandler.isRamping = true;
         OnRampStart?.Invoke();
     }
-    
+
     //*Rotate the wheels
     private void RotateWheels()
     {
@@ -127,7 +125,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         foreach (var wheel in wheels)
         {
             // rotate the wheel based on speed
-            wheel.Rotate(Vector3.right, CurrentMoveSpeed*360 * Time.deltaTime);
+            wheel.Rotate(Vector3.right, CurrentMoveSpeed * 360 * Time.deltaTime);
         }
     }
 
@@ -138,6 +136,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     {
         // Return if the player is dead
         if (!_isAlive)
+            return;
+
+        // Disable movement while ramping
+        if (carRampHandler.IsRamping)
             return;
 
         // Update the lane based on the swipe direction
@@ -169,6 +171,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private void Boost()
     {
         if (!_isAlive)
+            return;
+
+        // Disable boosting while ramping
+        if (carRampHandler.IsRamping)
             return;
 
         // Skip if the player is already boosting
