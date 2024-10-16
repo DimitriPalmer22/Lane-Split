@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 5ce3aae41ba3d9b468a2762cbb59a4ba, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -2833,6 +2833,26 @@ PrefabInstance:
       propertyPath: wheels.Array.data[3]
       value: 
       objectReference: {fileID: 1966123058}
+    - target: {fileID: 4459601881631737588, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.0417384
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459601881631737588, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.8342
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459601881631737588, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.698
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459601881631737588, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.373
+      objectReference: {fileID: 0}
     - target: {fileID: 6651541235434177220, guid: 3511b51547cc9afd2ac3f16d06215bf9,
         type: 3}
       propertyPath: m_Size.y
@@ -2913,6 +2933,26 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 57075e06afac20c49a9354624b7cbc43, type: 2}
+    - target: {fileID: 8858647429074118827, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.0417384
+      objectReference: {fileID: 0}
+    - target: {fileID: 8858647429074118827, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7342
+      objectReference: {fileID: 0}
+    - target: {fileID: 8858647429074118827, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.69799995
+      objectReference: {fileID: 0}
+    - target: {fileID: 8858647429074118827, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.373
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 9042637600190931944, guid: 3511b51547cc9afd2ac3f16d06215bf9, type: 3}
