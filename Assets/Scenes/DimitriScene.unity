@@ -1891,7 +1891,7 @@ MonoBehaviour:
   musicSource: {fileID: 0}
   slomoClip: {fileID: 8300000, guid: e3eb609335b33964190b4af0889f749f, type: 3}
   musicClips: []
-  carRampHandler: {fileID: 0}
+  carRampHandler: {fileID: 2090720835}
   playerScript: {fileID: 1341012953}
   slowTimeScale: 0
   slowMotionDuration: 1.5
@@ -2478,6 +2478,18 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &2090720835 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5273089539268193750, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+    type: 3}
+  m_PrefabInstance: {fileID: 7453070278112035688}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c728f21174d5494c90d55dd7c083537, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2141928334
 GameObject:
   m_ObjectHideFlags: 0
