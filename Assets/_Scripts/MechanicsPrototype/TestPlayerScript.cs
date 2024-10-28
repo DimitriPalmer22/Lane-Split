@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 
 public class TestPlayerScript : MonoBehaviour, IDebugManaged
 {
+    public static TestPlayerScript Instance { get; private set; }
+
     private int _lane;
 
     private bool _isAlive = true;
@@ -14,10 +16,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     [SerializeField] private float maxBoost = 10;
 
     [SerializeField] private float boostMultiplier = 2f;
-
-    private float _currentBoost;
-
-    private bool _isBoosting;
 
     public Transform[] wheels;
 
@@ -27,9 +25,23 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     public event Action OnRampStart;
 
-    //*Reference to the car ramp handler & sound manager scripts
+    public event Action<TestPlayerScript> OnNearMiss;
+
+    // Reference to the car ramp handler & sound manager scripts
     [SerializeField] private CarRampHandler carRampHandler;
     [SerializeField] private SoundManager soundManager;
+
+    [Header("Car Stats")] [SerializeField] [Min(0)]
+    private float startingMoveSpeed = 8;
+
+    [SerializeField] [Min(0)] private float laneChangeTime = 0.5f;
+    [SerializeField] [Min(1)] private int maxHealth = 1;
+
+    private float _currentBoost;
+
+    private bool _isBoosting;
+
+    private float _currentMoveSpeed;
 
     #region Getters
 
@@ -44,12 +56,21 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private bool IsVulnerable => !_isBoosting;
 
-    public float CurrentMoveSpeed => TestLevelManager.Instance.MoveSpeed * BoostMultiplier;
+    public float CurrentMoveSpeed => _currentMoveSpeed * boostMultiplier;
 
     #endregion
 
+    private void Awake()
+    {
+        // Set the instance to this
+        Instance = this;
+
+        // Set the current move speed to the starting move speed
+        _currentMoveSpeed = startingMoveSpeed;
+    }
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         // Initialize the input
         InputManager.Instance.OnSwipe += MoveOnSwipe;
@@ -75,9 +96,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         DebugManager.Instance.RemoveDebugItem(this);
     }
 
-
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         // Move the player
         MovePlayer();
@@ -245,6 +265,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
                 n => Vector3.Distance(n.transform.position, transform.position) <=
                      TestLevelManager.Instance.NearMissSize
             );
+
+        Debug.Log($"Near Miss Count: {allObstacles.Count()} - {validObstacles.Count()}");
+
         // .Where(n => n.TestLaneScript.LaneNumber == _lane || n.TestLaneScript.LaneNumber == oldLane)
         foreach (var obstacle in validObstacles)
             Debug.Log($"Near Missed: {obstacle} {obstacle.TestLaneScript.LaneNumber}");
@@ -307,6 +330,16 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private void AddBoost(float amount)
     {
         _currentBoost = Mathf.Clamp(_currentBoost + amount, 0, maxBoost);
+    }
+
+    public void MultiplyMoveSpeed(float mult)
+    {
+        _currentMoveSpeed *= mult;
+    }
+
+    public void AddMoveSpeed(float amt)
+    {
+        _currentMoveSpeed += amt;
     }
 
     public string GetDebugText()
