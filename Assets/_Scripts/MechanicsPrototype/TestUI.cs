@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TestUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text infoText;
     [SerializeField] private TMP_Text gameOverText;
     [SerializeField] private TMP_Text boostReadyText;
+    [SerializeField] private Slider boostSlider;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +29,11 @@ public class TestUI : MonoBehaviour
 
         // Update the boost ready text
         UpdateBoostReadyText();
+
+        // Update the boost slider
+        UpdateBoostSlider();
     }
+
 
     private void UpdateBoostReadyText()
     {
@@ -55,5 +61,16 @@ public class TestUI : MonoBehaviour
             gameOverText.text = $"Game Over\n" +
                                 $"Score: {TestLevelManager.Instance.LevelGenerator.DistanceTravelled}\n" +
                                 $"Tap to restart";
+    }
+
+
+    private void UpdateBoostSlider()
+    {
+        // Return if the boost slider is null
+        if (boostSlider == null)
+            return;
+
+        // Set the value of the slider to the boost percentage
+        boostSlider.value = LevelManager.Instance.Player.BoostPercentage;
     }
 }
