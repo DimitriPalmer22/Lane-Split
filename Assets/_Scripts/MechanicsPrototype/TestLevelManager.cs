@@ -7,8 +7,6 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
 {
     public static TestLevelManager Instance { get; private set; }
 
-    [SerializeField] private float moveSpeed = 4;
-
     [SerializeField] private float speedIncreaseMultiplier = 1.5f;
 
     [SerializeField] private float speedIncreaseAmount = 4;
@@ -35,7 +33,7 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
 
     #region Getters
 
-    public float MoveSpeed => moveSpeed;
+    public float MoveSpeed => TestPlayerScript.Instance.CurrentMoveSpeed;
 
     public float LaneWidth => laneWidth;
     public float LaneDepth => laneDepth;
@@ -91,10 +89,12 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
         _currentLevelTimer += levelLength;
 
         // Increase the move speed
-        moveSpeed *= speedIncreaseMultiplier;
+        // moveSpeed *= speedIncreaseMultiplier;
+        TestPlayerScript.Instance.MultiplyMoveSpeed(speedIncreaseMultiplier);
         
         // Add the speed increase amount
-        moveSpeed += speedIncreaseAmount;
+        // moveSpeed += speedIncreaseAmount;
+        TestPlayerScript.Instance.AddMoveSpeed(speedIncreaseAmount);
     }
 
 
@@ -121,7 +121,7 @@ public class TestLevelManager : MonoBehaviour, IDebugManaged
     public string GetDebugText()
     {
         return $"Time: {_totalTime:0.00} -> {_currentLevelTimer:0.00}\n" +
-               $"Speed: {moveSpeed}\n" +
+               $"Speed: {MoveSpeed}\n" +
                $"Player Lane: {LevelManager.Instance.Player.Lane}\n";
     }
 }

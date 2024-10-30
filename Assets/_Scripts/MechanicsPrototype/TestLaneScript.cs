@@ -70,8 +70,11 @@ public class TestLaneScript : MonoBehaviour
         // Set the material of the obstacle
         // obstacle.GetComponent<Renderer>().material = obstacleMaterial;
 
-        // Add an obstacleScript to the obstacle
-        _obstacle = obstacle.AddComponent<ObstacleScript>();
+        // // Add an obstacleScript to the obstacle
+        // _obstacle = obstacle.AddComponent<ObstacleScript>();
+        _obstacle = obstacle.GetComponent<ObstacleScript>();
+
+        Debug.Log($"Got obstacle: {_obstacle}");
 
         // Add a rigidbody to the obstacle
         // var rb = obstacle.AddComponent<Rigidbody>();

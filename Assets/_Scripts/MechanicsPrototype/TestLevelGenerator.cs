@@ -72,9 +72,6 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     // Update is called once per frame
     void Update()
     {
-        // Calculate the distance travelled
-        var moveAmount = _levelManager.MoveSpeed * Time.deltaTime;
-
         // // Move the lanes backwards
         // transform.position += -Vector3.forward * moveAmount;
         //
