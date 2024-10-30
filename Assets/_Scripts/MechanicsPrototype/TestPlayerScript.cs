@@ -91,11 +91,12 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         InputManager.Instance.PlayerControls.Gameplay.Boost.performed += OnBoostPerformed;
         InputManager.Instance.OnSwipe += BoostOnSwipe;
 
-        // Add this object to the debug manager
-        DebugManager.Instance.AddDebugItem(this);
-
         // Subscribe to the OnNearMiss event
         OnNearMiss += LogNearMiss;
+        OnNearMiss += NearMissBoostAdd;
+
+        // Add this object to the debug manager
+        DebugManager.Instance.AddDebugItem(this);
 
         // Set the player to the far left lane
         _lane = 0;
@@ -294,8 +295,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         foreach (var obstacle in validObstacles)
         {
             // Skip if the obstacle is in the previous lane
-            // if (obstacle.TestLaneScript.LaneNumber == oldLane)
-                // continue;
+            if (obstacle.TestLaneScript.LaneNumber != oldLane)
+                continue;
 
             OnNearMiss?.Invoke(this, obstacle);
         }
@@ -382,6 +383,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private void LogNearMiss(TestPlayerScript player, ObstacleScript obstacle)
     {
         Debug.Log($"{player.name} near Missed: {obstacle.name}");
+    }
+
+    private void NearMissBoostAdd(TestPlayerScript player, ObstacleScript obstacle)
+    {
+        AddBoost(maxBoost / 16);
     }
 
     #endregion

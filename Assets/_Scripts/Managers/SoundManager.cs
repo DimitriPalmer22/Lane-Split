@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,13 +26,13 @@ public class SoundManager : MonoBehaviour
     
     private void OnEnable()
     {
-        carRampHandler.OnRampEnter += OnRampEnter; 
+        // carRampHandler.OnRampEnter += OnRampEnter;
        // playerScript.OnRampStart += OnRampEnter;
     }
 
     private void OnDisable()
     {
-        carRampHandler.OnRampEnter -= OnRampEnter;
+        // carRampHandler.OnRampEnter -= OnRampEnter;
         //playerScript.OnRampStart -= OnRampEnter;
 
     }
@@ -48,6 +49,11 @@ public class SoundManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        carRampHandler.OnRampEnter += OnRampEnter;
     }
 
     // Called when the ramp event is triggered
