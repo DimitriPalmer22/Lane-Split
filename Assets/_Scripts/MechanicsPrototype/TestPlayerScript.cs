@@ -116,6 +116,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     // Update is called once per frame
     private void Update()
     {
+        // Update the lane change timer
+        laneChangeTime.Update(Time.deltaTime);
+
         // Move the player
         MovePlayer();
 
@@ -291,8 +294,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         foreach (var obstacle in validObstacles)
         {
             // Skip if the obstacle is in the previous lane
-            if (obstacle.TestLaneScript.LaneNumber == oldLane)
-                continue;
+            // if (obstacle.TestLaneScript.LaneNumber == oldLane)
+                // continue;
 
             OnNearMiss?.Invoke(this, obstacle);
         }

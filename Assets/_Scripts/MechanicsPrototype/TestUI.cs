@@ -10,17 +10,36 @@ public class TestUI : MonoBehaviour
     [SerializeField] private TMP_Text gameOverText;
     [SerializeField] private TMP_Text boostReadyText;
     [SerializeField] private Slider boostSlider;
+    [SerializeField] private TMP_Text nearMissText;
+
+    private CountdownTimer _nearMissTimer = new CountdownTimer(.5f);
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         // Disable the game over text
         gameOverText.gameObject.SetActive(false);
+
+        // Disable the near miss text
+        nearMissText.gameObject.SetActive(false);
+
+        LevelManager.Instance.Player.OnNearMiss += (_, _) =>
+        {
+            nearMissText.gameObject.SetActive(true);
+
+            _nearMissTimer.Reset();
+            _nearMissTimer.Start();
+        };
+
+        _nearMissTimer.OnTimerEnd += () => nearMissText.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        // Update the near miss timer
+        _nearMissTimer.Update(Time.deltaTime);
+
         // Update the info text
         UpdateInfoText();
 
@@ -62,7 +81,6 @@ public class TestUI : MonoBehaviour
                                 $"Score: {TestLevelManager.Instance.LevelGenerator.DistanceTravelled}\n" +
                                 $"Tap to restart";
     }
-
 
     private void UpdateBoostSlider()
     {
