@@ -9,23 +9,15 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 {
     public static TestPlayerScript Instance { get; private set; }
 
-    private int _lane;
+    #region Serialized Fields
 
-    private bool _isAlive = true;
+    [SerializeField] private Transform nearMissPosition;
+
+    [SerializeField] private Transform[] wheels;
 
     [SerializeField] private float maxBoost = 10;
 
     [SerializeField] private float boostMultiplier = 2f;
-
-    public Transform[] wheels;
-
-    public event Action<TestPlayerScript> OnBoostStart;
-
-    public event Action<TestPlayerScript> OnBoostEnd;
-
-    public event Action OnRampStart;
-
-    public event Action<TestPlayerScript> OnNearMiss;
 
     // Reference to the car ramp handler & sound manager scripts
     [SerializeField] private CarRampHandler carRampHandler;
@@ -34,14 +26,36 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     [Header("Car Stats")] [SerializeField] [Min(0)]
     private float startingMoveSpeed = 8;
 
-    [SerializeField] [Min(0)] private float laneChangeTime = 0.5f;
+    [SerializeField] private CountdownTimer laneChangeTime = new(0.5f, false, false);
     [SerializeField] [Min(1)] private int maxHealth = 1;
+
+    #endregion
+
+    #region Private Fields
+
+    private int _lane;
+
+    private bool _isAlive = true;
 
     private float _currentBoost;
 
     private bool _isBoosting;
 
     private float _currentMoveSpeed;
+
+    #endregion
+
+    #region Events
+
+    public event Action<TestPlayerScript> OnBoostStart;
+
+    public event Action<TestPlayerScript> OnBoostEnd;
+
+    public event Action OnRampStart;
+
+    public event Action<TestPlayerScript, ObstacleScript> OnNearMiss;
+
+    #endregion
 
     #region Getters
 
@@ -79,6 +93,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Add this object to the debug manager
         DebugManager.Instance.AddDebugItem(this);
+
+        // Subscribe to the OnNearMiss event
+        OnNearMiss += LogNearMiss;
 
         // Set the player to the far left lane
         _lane = 0;
@@ -252,6 +269,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Update the position of the player
         SetLanePosition();
 
+        // Return if the player is currently boosting
+        if (_isBoosting)
+            return;
+
         // Near miss code
         // Get all Obstacle scripts
         var allObstacles = TestLevelManager.Instance.LevelGenerator.SpawnedLanes
@@ -262,15 +283,19 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Get all obstacles within near miss distance
         var validObstacles = allObstacles
             .Where(
-                n => Vector3.Distance(n.transform.position, transform.position) <=
+                n => Vector3.Distance(n.NearMissPosition.position, nearMissPosition.position) <=
                      TestLevelManager.Instance.NearMissSize
             );
 
-        Debug.Log($"Near Miss Count: {allObstacles.Count()} - {validObstacles.Count()}");
-
-        // .Where(n => n.TestLaneScript.LaneNumber == _lane || n.TestLaneScript.LaneNumber == oldLane)
+        // Invoke the OnNearMiss event
         foreach (var obstacle in validObstacles)
-            Debug.Log($"Near Missed: {obstacle} {obstacle.TestLaneScript.LaneNumber}");
+        {
+            // Skip if the obstacle is in the previous lane
+            if (obstacle.TestLaneScript.LaneNumber == oldLane)
+                continue;
+
+            OnNearMiss?.Invoke(this, obstacle);
+        }
     }
 
     #endregion
@@ -348,4 +373,13 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
                $"Boost: {_currentBoost} / {maxBoost} ({BoostPercentage})\n" +
                $"Is Boosting: {_isBoosting}\n";
     }
+
+    #region Event Functions
+
+    private void LogNearMiss(TestPlayerScript player, ObstacleScript obstacle)
+    {
+        Debug.Log($"{player.name} near Missed: {obstacle.name}");
+    }
+
+    #endregion
 }

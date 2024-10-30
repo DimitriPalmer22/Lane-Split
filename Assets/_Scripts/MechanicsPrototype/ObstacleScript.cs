@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class ObstacleScript : MonoBehaviour
 {
+    [SerializeField] private Transform nearMissPosition;
+
     private TestLaneScript _testLaneScript;
 
     public TestLaneScript TestLaneScript => _testLaneScript;
+
+    public Transform NearMissPosition => nearMissPosition;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +35,6 @@ public class ObstacleScript : MonoBehaviour
             return;
 
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, TestLevelManager.Instance.NearMissSize);
+        Gizmos.DrawWireSphere(nearMissPosition.position, TestLevelManager.Instance.NearMissSize);
     }
 }
