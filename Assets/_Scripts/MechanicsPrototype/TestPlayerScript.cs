@@ -43,6 +43,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private float _currentMoveSpeed;
 
+    private int _oldLane;
+
+    private readonly HashSet<ObstacleScript> _currentNearMissedObstacles = new();
+
     #endregion
 
     #region Events
@@ -54,6 +58,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     public event Action OnRampStart;
 
     public event Action<TestPlayerScript, ObstacleScript> OnNearMiss;
+
+    public event Action<TestPlayerScript> OnLaneChangeStart;
+
+    public event Action<TestPlayerScript> OnLaneChangeEnd;
 
     #endregion
 
@@ -71,6 +79,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     private bool IsVulnerable => !_isBoosting;
 
     public float CurrentMoveSpeed => _currentMoveSpeed * boostMultiplier;
+
+    private bool IsChangingLanes => laneChangeTime.IsTicking && laneChangeTime.IsActive;
 
     #endregion
 
@@ -100,7 +110,22 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Set the player to the far left lane
         _lane = 0;
-        SetLanePosition();
+        _oldLane = _lane;
+        SetLanePosition(true);
+
+
+        // Set up the lane change timer
+        laneChangeTime.OnTimerEnd += () =>
+        {
+            // Invoke the OnLaneChangeEnd event
+            OnLaneChangeEnd?.Invoke(this);
+
+            // Disable the lane change timer
+            laneChangeTime.SetActive(false);
+        };
+
+        // Clear the near missed obstacles on lane change end
+        OnLaneChangeEnd += _ => _currentNearMissedObstacles.Clear();
     }
 
     private void OnDestroy()
@@ -113,6 +138,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Remove this object from the debug manager
         DebugManager.Instance.RemoveDebugItem(this);
     }
+
+    #region Update Methods
 
     // Update is called once per frame
     private void Update()
@@ -128,6 +155,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Update the position of the player
         SetLanePosition();
+
+        // Update near miss
+        UpdateNearMiss();
 
         // Update boost
         UpdateBoost();
@@ -153,16 +183,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
     }
 
-    // Trigger the ramp start event when the player enters the ramp
-    public void TriggerRampStart()
-    {
-        OnRampStart?.Invoke();
-    }
-
-    //*Rotate the wheels
+    // Rotate the wheels
     private void RotateWheels()
     {
-        // Rotate the wheel in wheels array 
+        // Rotate the wheel in wheels array
         foreach (var wheel in wheels)
         {
             // rotate the wheel based on speed
@@ -170,6 +194,108 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         }
     }
 
+    private void SetLanePosition(bool force = false)
+    {
+        // Return if the player is dead
+        if (!_isAlive)
+            return;
+
+        if (force)
+        {
+            // Set the x position of the player based on the lane
+            transform.position = TestLevelManager.Instance.GetLanePosition(_lane) +
+                                 new Vector3(0, transform.position.y, transform.position.z);
+
+            return;
+        }
+
+        // Return if the player is NOT currently changing lanes
+        if (!IsChangingLanes)
+            return;
+
+        var oldLanePosition = TestLevelManager.Instance.GetLanePosition(_oldLane);
+        var newLanePosition = TestLevelManager.Instance.GetLanePosition(_lane);
+
+        // Set the x position of the player based on the lane
+        transform.position = Vector3.Lerp(oldLanePosition, newLanePosition, laneChangeTime.Percentage) +
+                             new Vector3(0, transform.position.y, transform.position.z);
+    }
+
+    private void UpdateBoost()
+    {
+        // Return if the player is dead
+        if (!_isAlive)
+            return;
+
+        // Return if the player isn't boosting
+        // Decrease the boost
+        if (_isBoosting)
+            AddBoost(-1 * Time.deltaTime);
+
+        // Add boost
+        else
+            AddBoost(1 * Time.deltaTime);
+
+        // If the boost is empty, set the boost flag to false
+        if (_currentBoost <= 0)
+        {
+            // If the player was boosting, invoke the OnBoostEnd event
+            if (_isBoosting)
+                OnBoostEnd?.Invoke(this);
+
+            _isBoosting = false;
+        }
+    }
+
+    private void UpdateNearMiss()
+    {
+        // Return if the player is not lane changing
+        if (!IsChangingLanes)
+            return;
+
+        // Return if the player is currently boosting
+        if (_isBoosting)
+            return;
+
+        // Get all Obstacle scripts
+        var allObstacles = TestLevelManager.Instance.LevelGenerator.SpawnedLanes
+            .SelectMany(n => n.Value)
+            .Where(n => n.HasObstacle)
+            .Select(n => n.Obstacle);
+
+        // Get all obstacles within near miss distance
+        var validObstacles = allObstacles
+            .Where(
+                n => Vector3.Distance(n.NearMissPosition.position, nearMissPosition.position) <=
+                     TestLevelManager.Instance.NearMissSize
+            );
+
+        // Invoke the OnNearMiss event
+        foreach (var obstacle in validObstacles)
+        {
+            // Skip if the obstacle is in the previous lane
+            if (obstacle.TestLaneScript.LaneNumber != _oldLane)
+                continue;
+
+            // Skip if the obstacle has already been near missed
+            if (_currentNearMissedObstacles.Contains(obstacle))
+                continue;
+
+            // Add the obstacle to the near missed obstacles
+            _currentNearMissedObstacles.Add(obstacle);
+
+            // Invoke the OnNearMiss event
+            OnNearMiss?.Invoke(this, obstacle);
+        }
+    }
+
+    #endregion
+
+    // Trigger the ramp start event when the player enters the ramp
+    public void TriggerRampStart()
+    {
+        OnRampStart?.Invoke();
+    }
 
     #region Input Functions
 
@@ -181,6 +307,10 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Disable movement while ramping
         if (carRampHandler.IsRamping)
+            return;
+
+        // Return if the player is currently changing lanes
+        if (IsChangingLanes)
             return;
 
         // Update the lane based on the swipe direction
@@ -233,35 +363,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         OnBoostStart?.Invoke(this);
     }
 
-    private void UpdateBoost()
-    {
-        // Return if the player is dead
-        if (!_isAlive)
-            return;
-
-        // Return if the player isn't boosting
-        // Decrease the boost
-        if (_isBoosting)
-            AddBoost(-1 * Time.deltaTime);
-
-        // Add boost
-        else
-            AddBoost(1 * Time.deltaTime);
-
-        // If the boost is empty, set the boost flag to false
-        if (_currentBoost <= 0)
-        {
-            // If the player was boosting, invoke the OnBoostEnd event
-            if (_isBoosting)
-                OnBoostEnd?.Invoke(this);
-
-            _isBoosting = false;
-        }
-    }
+    #endregion
 
     private void ChangeLanes(int modifier)
     {
-        int oldLane = _lane;
+        var oldLane = _lane;
 
         // Ensure the lane is within the bounds
         _lane = Mathf.Clamp(_lane + modifier, 0, TestLevelManager.Instance.LaneCount - 1);
@@ -270,39 +376,43 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (oldLane == _lane)
             return;
 
-        // Update the position of the player
-        SetLanePosition();
+        // Set the old lane to the current lane
+        _oldLane = oldLane;
 
-        // Return if the player is currently boosting
-        if (_isBoosting)
-            return;
-
-        // Near miss code
-        // Get all Obstacle scripts
-        var allObstacles = TestLevelManager.Instance.LevelGenerator.SpawnedLanes
-            .SelectMany(n => n.Value)
-            .Where(n => n.HasObstacle)
-            .Select(n => n.Obstacle);
-
-        // Get all obstacles within near miss distance
-        var validObstacles = allObstacles
-            .Where(
-                n => Vector3.Distance(n.NearMissPosition.position, nearMissPosition.position) <=
-                     TestLevelManager.Instance.NearMissSize
-            );
-
-        // Invoke the OnNearMiss event
-        foreach (var obstacle in validObstacles)
-        {
-            // Skip if the obstacle is in the previous lane
-            if (obstacle.TestLaneScript.LaneNumber != oldLane)
-                continue;
-
-            OnNearMiss?.Invoke(this, obstacle);
-        }
+        // Reset the lane change timer
+        laneChangeTime.Reset();
+        laneChangeTime.SetActive(true);
+        OnLaneChangeStart?.Invoke(this);
     }
 
-    #endregion
+    private void KillPlayer()
+    {
+        // Set the player to dead
+        _isAlive = false;
+    }
+
+    private void AddBoost(float amount)
+    {
+        _currentBoost = Mathf.Clamp(_currentBoost + amount, 0, maxBoost);
+    }
+
+    public void MultiplyMoveSpeed(float mult)
+    {
+        _currentMoveSpeed *= mult;
+    }
+
+    public void AddMoveSpeed(float amt)
+    {
+        _currentMoveSpeed += amt;
+    }
+
+    public string GetDebugText()
+    {
+        return $"Player Alive?: {_isAlive}\n" +
+               $"Boost: {_currentBoost} / {maxBoost} ({BoostPercentage})\n" +
+               $"Is Boosting: {_isBoosting}\n" +
+               $"Lane Change Time: {laneChangeTime.TimeLeft:0.00} / {laneChangeTime.MaxTime:0.00}\n";
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -339,44 +449,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         }
     }
 
-    private void KillPlayer()
-    {
-        // Set the player to dead
-        _isAlive = false;
-    }
-
-    private void SetLanePosition()
-    {
-        // Return if the player is dead
-        if (!_isAlive)
-            return;
-
-        // Set the x position of the player based on the lane
-        transform.position = TestLevelManager.Instance.GetLanePosition(_lane) +
-                             new Vector3(0, transform.position.y, transform.position.z);
-    }
-
-    private void AddBoost(float amount)
-    {
-        _currentBoost = Mathf.Clamp(_currentBoost + amount, 0, maxBoost);
-    }
-
-    public void MultiplyMoveSpeed(float mult)
-    {
-        _currentMoveSpeed *= mult;
-    }
-
-    public void AddMoveSpeed(float amt)
-    {
-        _currentMoveSpeed += amt;
-    }
-
-    public string GetDebugText()
-    {
-        return $"Player Alive?: {_isAlive}\n" +
-               $"Boost: {_currentBoost} / {maxBoost} ({BoostPercentage})\n" +
-               $"Is Boosting: {_isBoosting}\n";
-    }
 
     #region Event Functions
 
