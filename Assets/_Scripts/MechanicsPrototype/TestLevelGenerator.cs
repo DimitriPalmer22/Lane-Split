@@ -24,6 +24,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [SerializeField] [Range(0, 1)] private float obstacleChance = 0.25f;
 
+    [SerializeField] private GameObject[] laneObjects;
+
     [Header("Materials")] [SerializeField] private Material laneMaterial;
     [SerializeField] private Material obstacleMaterial;
 
