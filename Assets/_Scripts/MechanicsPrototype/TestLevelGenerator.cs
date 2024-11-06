@@ -35,8 +35,9 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     // Used to spawn and destroy lanes
     private float _distanceTravelled;
 
-
     private Dictionary<float, HashSet<TestLaneScript>> _spawnedLanes;
+
+    private GameObject _currentLaneObject;
 
     #region Getters
 
@@ -62,32 +63,28 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         // Initialize the lanes
         InitializeLanes();
 
         // Add this to the debug manager
         DebugManager.Instance.AddDebugItem(this);
+
+        CreateLaneObjects();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        // // Move the lanes backwards
-        // transform.position += -Vector3.forward * moveAmount;
-        //
-        // // Add the move amount to the distance travelled
-        // _distanceTravelled += moveAmount;
-
         // Check if we need to spawn more lanes
         InitializeLanes();
 
         // Check if we need to destroy lanes
         DestroyLanes();
 
-        // Check if we need to move the entire level
-        // MoveEntireLevel();
+        // Create lane objects if necessary
+
     }
 
     private void InitializeLanes()
@@ -252,6 +249,23 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         }
     }
 
+    private void CreateLaneObjects()
+    {
+        // Get a random lane from the lane objects
+        var lane = laneObjects[0];
+
+        if (!lane.TryGetComponent(out LaneBoundsHelper boundsHelper))
+        {
+            Debug.LogError($"{lane} DOES NOT HAVE LANE BOUNDS HELPER");
+            return;
+        }
+
+        // Spawn the lane object at the current position
+        var newLaneObject = Instantiate(lane);
+
+        // Offset the lane object based on its helper script
+        newLaneObject.transform.position += new Vector3(0, -boundsHelper.YOffset, boundsHelper.EndZ);
+    }
 
     public string GetDebugText()
     {
