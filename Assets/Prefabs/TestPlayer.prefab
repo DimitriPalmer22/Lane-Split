@@ -166,7 +166,7 @@ MonoBehaviour:
   soundManager: {fileID: 0}
   startingMoveSpeed: 8
   laneChangeTime:
-    maxTime: 0.5
+    maxTime: 0.125
   maxHealth: 1
 --- !u!114 &5273089539268193750
 MonoBehaviour:
