@@ -164,6 +164,8 @@ MonoBehaviour:
   soundManager: {fileID: 0}
   volume: {fileID: 0}
   maxBoost: 10
+  boostRechargeRate: 1
+  boostDepleteRate: 2.5
   boostMultiplier: 3
   maxBoostChromaticAberration: 1
   startingMoveSpeed: 8

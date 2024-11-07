@@ -23,6 +23,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     [SerializeField] private Volume volume;
 
     [Header("Boost")] [SerializeField] private float maxBoost = 10;
+    [SerializeField] [Min(0)] private float boostRechargeRate = 1;
+    [SerializeField] [Min(0)] private float boostDepleteRate = 1;
     [SerializeField] private float boostMultiplier = 2f;
     [SerializeField] [Min(0)] private float maxBoostChromaticAberration = 0.5f;
 
@@ -232,11 +234,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Decrease the boost
         if (_isBoosting)
-            AddBoost(-1 * Time.deltaTime);
+            AddBoost(-boostDepleteRate * Time.deltaTime);
 
         // Add boost
         else
-            AddBoost(1 * Time.deltaTime);
+            AddBoost(boostRechargeRate * Time.deltaTime);
 
         // If the boost is empty, set the boost flag to false
         if (_currentBoost <= 0)
