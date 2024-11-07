@@ -109,7 +109,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         DebugManager.Instance.AddDebugItem(this);
 
         // Set the player to the far left lane
-        _lane = 0;
+        _lane = TestLevelManager.Instance.LaneCount / 2;
         _oldLane = _lane;
         SetLanePosition(true);
 

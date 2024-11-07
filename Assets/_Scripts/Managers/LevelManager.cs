@@ -29,7 +29,7 @@ public class LevelManager : MonoBehaviour
     private void InitializeInput()
     {
         // Initialize the input
-        InputManager.Instance.PlayerControls.Gameplay.Press.canceled += RestartLevel;
+        InputManager.Instance.PlayerControls.Gameplay.Restart.canceled += RestartLevel;
     }
 
     // Update is called once per frame
