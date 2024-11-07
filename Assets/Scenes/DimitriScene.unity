@@ -950,6 +950,7 @@ MonoBehaviour:
   hideLaneBlocks: 1
   spawnDistance: 96
   lanesSpawnDistance: 500
+  lanesDespawnDistance: 50
   laneScaleX: 0.875
   laneScaleZ: 1
   obstacleChance: 0.024
@@ -1640,7 +1641,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: a6560a915ef98420e9faacc1c7438823, type: 2}
+  sharedProfile: {fileID: 11400000, guid: f811417e1d140ec4d8c1cdf4673ae156, type: 2}
 --- !u!4 &1160870679
 Transform:
   m_ObjectHideFlags: 0
@@ -1650,7 +1651,7 @@ Transform:
   m_GameObject: {fileID: 1160870677}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1207219, y: 8.037895, z: -6.49573}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2532,7 +2533,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -2802,6 +2803,11 @@ PrefabInstance:
       propertyPath: m_Time
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 3063258729448079965, guid: 3511b51547cc9afd2ac3f16d06215bf9,
+        type: 3}
+      propertyPath: volume
+      value: 
+      objectReference: {fileID: 1160870678}
     - target: {fileID: 3063258729448079965, guid: 3511b51547cc9afd2ac3f16d06215bf9,
         type: 3}
       propertyPath: soundManager

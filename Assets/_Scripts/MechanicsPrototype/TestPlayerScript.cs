@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class TestPlayerScript : MonoBehaviour, IDebugManaged
 {
@@ -11,17 +13,20 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     #region Serialized Fields
 
-    [SerializeField] private Transform nearMissPosition;
+    [Header("References")] [SerializeField]
+    private Transform nearMissPosition;
 
     [SerializeField] private Transform[] wheels;
-
-    [SerializeField] private float maxBoost = 10;
-
-    [SerializeField] private float boostMultiplier = 2f;
-
-    // Reference to the car ramp handler & sound manager scripts
     [SerializeField] private CarRampHandler carRampHandler;
     [SerializeField] private SoundManager soundManager;
+
+    [SerializeField] private Volume volume;
+
+    [Header("Boost")] [SerializeField] private float maxBoost = 10;
+    [SerializeField] [Min(0)] private float boostRechargeRate = 1;
+    [SerializeField] [Min(0)] private float boostDepleteRate = 1;
+    [SerializeField] private float boostMultiplier = 2f;
+    [SerializeField] [Min(0)] private float maxBoostChromaticAberration = 0.5f;
 
     [Header("Car Stats")] [SerializeField] [Min(0)]
     private float startingMoveSpeed = 8;
@@ -227,14 +232,13 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (!_isAlive)
             return;
 
-        // Return if the player isn't boosting
         // Decrease the boost
         if (_isBoosting)
-            AddBoost(-1 * Time.deltaTime);
+            AddBoost(-boostDepleteRate * Time.deltaTime);
 
         // Add boost
         else
-            AddBoost(1 * Time.deltaTime);
+            AddBoost(boostRechargeRate * Time.deltaTime);
 
         // If the boost is empty, set the boost flag to false
         if (_currentBoost <= 0)
@@ -245,6 +249,20 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
             _isBoosting = false;
         }
+
+
+        // Get the chromatic aberration volume component
+        var chromaticAberration = volume.profile.TryGet(out ChromaticAberration ca);
+
+        // If the current boost is at its max, apply the chromatic aberration
+        if (_currentBoost >= maxBoost && !_isBoosting)
+        {
+            var randomChrAb = UnityEngine.Random.Range(0, maxBoostChromaticAberration);
+
+            // Set the intensity of the chromatic aberration
+            ca.intensity.Override(randomChrAb);
+        }
+        else ca.intensity.Override(0);
     }
 
     private void UpdateNearMiss()
