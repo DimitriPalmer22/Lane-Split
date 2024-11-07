@@ -166,9 +166,9 @@ MonoBehaviour:
   maxBoost: 10
   boostRechargeRate: 1
   boostDepleteRate: 2.5
-  boostMultiplier: 3
+  boostMultiplier: 2
   maxBoostChromaticAberration: 1
-  startingMoveSpeed: 8
+  startingMoveSpeed: 12
   laneChangeTime:
     maxTime: 0.125
   maxHealth: 1

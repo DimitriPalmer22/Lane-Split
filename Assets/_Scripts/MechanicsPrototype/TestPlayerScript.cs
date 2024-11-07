@@ -83,7 +83,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private bool IsVulnerable => !_isBoosting;
 
-    public float CurrentMoveSpeed => _currentMoveSpeed * boostMultiplier;
+    public float CurrentMoveSpeed => _currentMoveSpeed * BoostMultiplier;
 
     private bool IsChangingLanes => laneChangeTime.IsTicking && laneChangeTime.IsActive;
 
