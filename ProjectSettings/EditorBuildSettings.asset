@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/DimitriScene.unity
-    guid: 5683ee532071506f3b8326e790103a39
-  - enabled: 1
     path: Assets/Scenes/BrenahScene.unity
     guid: da2d244d34f3a8d4f86f54858509210c
+  - enabled: 1
+    path: Assets/Scenes/DimitriScene.unity
+    guid: 5683ee532071506f3b8326e790103a39
   m_configObjects: {}
