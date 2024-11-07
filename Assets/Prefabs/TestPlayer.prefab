@@ -160,10 +160,12 @@ MonoBehaviour:
   - {fileID: 9068812200007429654}
   - {fileID: 3379402073541732105}
   - {fileID: 1490050634304363718}
-  maxBoost: 10
-  boostMultiplier: 3
   carRampHandler: {fileID: 5273089539268193750}
   soundManager: {fileID: 0}
+  volume: {fileID: 0}
+  maxBoost: 10
+  boostMultiplier: 3
+  maxBoostChromaticAberration: 1
   startingMoveSpeed: 8
   laneChangeTime:
     maxTime: 0.125
