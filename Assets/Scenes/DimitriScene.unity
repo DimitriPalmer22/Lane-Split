@@ -955,7 +955,7 @@ MonoBehaviour:
   laneScaleZ: 1
   obstacleChance: 0.024
   laneObjects:
-  - {fileID: 5915236822312427593, guid: 225bd181ea10bab43866eca30fa4f92a, type: 3}
+  - {fileID: 6004813888146081602, guid: a9276840d9cc41b44a850378c94d0d26, type: 3}
   laneMaterial: {fileID: 2100000, guid: 032b8f13b6327b82b88bcc941210d7da, type: 2}
   obstacleMaterial: {fileID: 2100000, guid: c4c6840fba3a73e4983e19c802076db1, type: 2}
   vehicles:
