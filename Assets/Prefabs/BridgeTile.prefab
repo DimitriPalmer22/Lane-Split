@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 58691320711203052}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -172.90088, y: -302.1094, z: -118.92352}
+  m_LocalPosition: {x: 0, y: -13.7394, z: 261.8096}
   m_LocalScale: {x: 1311.3304, y: 51.45269, z: 34713.56}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -350,7 +350,7 @@ Transform:
   m_GameObject: {fileID: 2968811244477986171}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -315.8927, y: -302.78806, z: -286.14728}
+  m_LocalPosition: {x: -143.0393, y: -14.4181, z: 94.5858}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -444,7 +444,7 @@ Transform:
   m_GameObject: {fileID: 3080655972953771972}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -172.90088, y: -302.1094, z: -813.19476}
+  m_LocalPosition: {x: 0, y: -13.7394, z: -432.4617}
   m_LocalScale: {x: 1311.3304, y: 51.45269, z: 34713.56}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -744,7 +744,7 @@ Transform:
   m_GameObject: {fileID: 3148238093695660909}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -315.8927, y: -302.78806, z: -686.1473}
+  m_LocalPosition: {x: -143.0393, y: -14.4181, z: -305.4142}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -837,7 +837,7 @@ Transform:
   m_GameObject: {fileID: 4546164159505274498}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -315.8927, y: -302.78806, z: -1086.1472}
+  m_LocalPosition: {x: -143.0393, y: -14.4181, z: -705.4139}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -912,6 +912,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6980575167495720542}
+  - component: {fileID: 9106900856152276671}
   m_Layer: 0
   m_Name: BridgeTile
   m_TagString: Untagged
@@ -928,7 +929,7 @@ Transform:
   m_GameObject: {fileID: 6004813888146081602}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -763.4, y: 323.98807, z: 785.5473}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -940,6 +941,22 @@ Transform:
   - {fileID: 712263420823232727}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9106900856152276671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6004813888146081602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 020215da5c454c1abd18c9f50dd1b4e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startZ: -605
+  endZ: 430
+  yOffset: 7
+  lineDistance: 100
 --- !u!1001 &3293875768591274911
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -951,17 +968,17 @@ PrefabInstance:
     - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -172.85342
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -288.37
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -380.73312
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
         type: 3}
