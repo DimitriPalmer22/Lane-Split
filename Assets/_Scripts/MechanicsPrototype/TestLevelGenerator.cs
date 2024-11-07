@@ -9,15 +9,13 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 {
     private const float DISTANCE_RESET = 128;
 
-    private TestLevelManager _levelManager;
-
-    // How far forward the generated lanes are going.
-    // Used to determine if more lanes should be spawned
-    private float _laneZ;
+    #region Serialized Fields
 
     [SerializeField] private bool hideLaneBlocks = true;
 
     [SerializeField] private float spawnDistance = 16;
+    [SerializeField] private float lanesSpawnDistance = 200;
+    [SerializeField] private float lanesDespawnDistance = 50;
 
     [SerializeField] [Range(0.25f, 1)] private float laneScaleX = 1;
     [SerializeField] [Range(0.25f, 1)] private float laneScaleZ = 1;
@@ -31,13 +29,29 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [Header("Vehicles")] [SerializeField] private SpawnWeight[] vehicles;
 
+    #endregion
+
+    #region Private Fields
+
+    private TestLevelManager _levelManager;
+
+    // How far forward the generated lanes are going.
+    // Used to determine if more lanes should be spawned
+    private float _laneZ;
+
     // A float to keep track of how far the player has travelled.
     // Used to spawn and destroy lanes
     private float _distanceTravelled;
 
     private Dictionary<float, HashSet<TestLaneScript>> _spawnedLanes;
 
-    private GameObject _currentLaneObject;
+    private LaneBoundsHelper _currentLaneObject;
+
+    private float _spawnedLaneObjectDistance;
+
+    private readonly Queue<LaneBoundsHelper> _despawnLaneObjects = new Queue<LaneBoundsHelper>();
+
+    #endregion
 
     #region Getters
 
@@ -71,6 +85,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         // Add this to the debug manager
         DebugManager.Instance.AddDebugItem(this);
 
+        // Spawn the initial lanes
+        SpawnLaneObjectBeforeStart();
         CreateLaneObjects();
     }
 
@@ -84,7 +100,10 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         DestroyLanes();
 
         // Create lane objects if necessary
+        CreateLaneObjects();
 
+        // Despawn lane objects if necessary
+        DespawnLaneObjects();
     }
 
     private void InitializeLanes()
@@ -211,65 +230,78 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         _distanceTravelled += distance;
     }
 
-    private void MoveEntireLevel()
-    {
-        // Return if the transform z is less than the reset distance
-        if (transform.position.z > -DISTANCE_RESET)
-            return;
-
-        // Add the distance reset to the transform position
-        transform.position += Vector3.forward * DISTANCE_RESET;
-
-        // Find the largest key in the spawned lanes
-        var largestKey = 0f;
-        foreach (var key in _spawnedLanes.Keys)
-        {
-            if (key > largestKey)
-                largestKey = key;
-        }
-
-        // Get the remainder of the largest key divided by the ResetDistance
-        var keyRemainder = largestKey % DISTANCE_RESET;
-
-        // Get the difference between the largest key and the remainder
-        var keyDifference = largestKey - keyRemainder;
-
-        // Move all the lanes forward
-        foreach (var key in _spawnedLanes.Keys)
-        {
-            foreach (var obj in _spawnedLanes[key])
-            {
-                obj.transform.localPosition =
-                    new Vector3(
-                        obj.transform.localPosition.x,
-                        obj.transform.localPosition.y,
-                        obj.transform.localPosition.z - keyDifference
-                    );
-            }
-        }
-    }
-
     private void CreateLaneObjects()
     {
-        // Get a random lane from the lane objects
-        var lane = laneObjects[0];
+        if (_distanceTravelled < _spawnedLaneObjectDistance - lanesSpawnDistance)
+            return;
 
+        // Get a random lane from the lane objects
+        var lane = laneObjects[UnityEngine.Random.Range(0, laneObjects.Length)];
+
+        SpawnLaneObject(lane);
+    }
+
+    private void SpawnLaneObject(GameObject prefab)
+    {
+        // Spawn the lane object at the current position
+        var newLaneObject = Instantiate(prefab);
+
+        if (!newLaneObject.TryGetComponent(out LaneBoundsHelper boundsHelper))
+        {
+            Debug.LogError($"{newLaneObject} DOES NOT HAVE LANE BOUNDS HELPER");
+            return;
+        }
+
+        // Offset the lane object based on its helper script
+        newLaneObject.transform.position = new Vector3(0, -boundsHelper.YOffset, -boundsHelper.StartZ + _spawnedLaneObjectDistance);
+
+        // Set the current lane object
+        _currentLaneObject = boundsHelper;
+
+        // Set the spawned lane object distance
+        _spawnedLaneObjectDistance += boundsHelper.TotalLength;
+
+        // Add the lane object to the despawn queue
+        _despawnLaneObjects.Enqueue(boundsHelper);
+    }
+
+    private void SpawnLaneObjectBeforeStart()
+    {
+        // Get a random lane from the lane objects
+        var lane = laneObjects[UnityEngine.Random.Range(0, laneObjects.Length)];
+
+        // Get the lane bounds helper from the lane object
         if (!lane.TryGetComponent(out LaneBoundsHelper boundsHelper))
         {
             Debug.LogError($"{lane} DOES NOT HAVE LANE BOUNDS HELPER");
             return;
         }
 
-        // Spawn the lane object at the current position
-        var newLaneObject = Instantiate(lane);
+        // Offset the _spawnedLaneObjectDistance based on the lane object's length
+        _spawnedLaneObjectDistance -= boundsHelper.TotalLength;
 
-        // Offset the lane object based on its helper script
-        newLaneObject.transform.position += new Vector3(0, -boundsHelper.YOffset, boundsHelper.EndZ);
+        // Spawn the lane object at the current position
+        SpawnLaneObject(lane);
+    }
+
+    private void DespawnLaneObjects()
+    {
+        if (_despawnLaneObjects.Count == 0)
+            return;
+
+        // Get the first lane object in the queue
+        var laneObject = _despawnLaneObjects.Peek();
+
+        // Check if the lane object is behind the player
+        // Destroy the lane object
+        if (laneObject.CurrentStartZ + laneObject.TotalLength < _distanceTravelled - lanesDespawnDistance)
+            Destroy(_despawnLaneObjects.Dequeue().gameObject);
     }
 
     public string GetDebugText()
     {
-        return $"Distance Travelled: {_distanceTravelled}\n";
+        return $"Distance Travelled: {_distanceTravelled}\n" +
+               $"Spawned Lane Distance: {_spawnedLaneObjectDistance}\n";
     }
 
     private void OnDrawGizmos()

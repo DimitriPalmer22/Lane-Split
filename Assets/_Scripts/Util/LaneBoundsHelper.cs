@@ -18,6 +18,8 @@ public class LaneBoundsHelper : MonoBehaviour
 
     public float YOffset => yOffset;
 
+    public float CurrentStartZ => transform.position.z + startZ;
+
     #endregion
 
     private void OnDrawGizmos()

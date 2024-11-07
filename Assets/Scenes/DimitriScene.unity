@@ -240,84 +240,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1001 &105402524
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -7
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 197.48
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 904596756767863129, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1403151472126682488, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: e64947b2e8fbd4b4aa0f95e6003650f6, type: 2}
-    - target: {fileID: 5915236822312427593, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_Name
-      value: BridgeFinal
-      objectReference: {fileID: 0}
-    - target: {fileID: 5915236822312427593, guid: 225bd181ea10bab43866eca30fa4f92a,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 225bd181ea10bab43866eca30fa4f92a, type: 3}
 --- !u!1 &175503936
 GameObject:
   m_ObjectHideFlags: 0
@@ -1009,7 +931,7 @@ MonoBehaviour:
   speedIncreaseMultiplier: 1
   speedIncreaseAmount: 4
   levelLength: 6
-  laneWidth: 2.5
+  laneWidth: 2.6
   laneCount: 5
   nearMissSize: 3
   laneDepth: 6
@@ -1027,6 +949,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hideLaneBlocks: 1
   spawnDistance: 96
+  lanesSpawnDistance: 500
   laneScaleX: 0.875
   laneScaleZ: 1
   obstacleChance: 0.024
@@ -2676,7 +2599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 135}
+  m_AnchoredPosition: {x: 0, y: 245}
   m_SizeDelta: {x: 960, y: 540}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2141928336
@@ -3000,7 +2923,6 @@ SceneRoots:
   - {fileID: 1251593809}
   - {fileID: 1735387538}
   - {fileID: 7453070278112035688}
-  - {fileID: 105402524}
   - {fileID: 1225203597}
   - {fileID: 598667995}
   - {fileID: 1160870679}
