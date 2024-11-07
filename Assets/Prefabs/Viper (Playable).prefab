@@ -182,6 +182,7 @@ GameObject:
   - component: {fileID: 3063258729448079965}
   - component: {fileID: 5273089539268193750}
   - component: {fileID: 3487438271040591168}
+  - component: {fileID: 5551432496289884336}
   m_Layer: 0
   m_Name: Viper (Playable)
   m_TagString: Untagged
@@ -199,7 +200,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.54922, y: 0.54922, z: 0.54922}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7415371315531618592}
@@ -291,14 +292,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nearMissPosition: {fileID: 8949573321118714360}
   wheels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  maxBoost: 10
-  boostMultiplier: 3
+  - {fileID: 7037265874335014018}
+  - {fileID: 856850100332089146}
+  - {fileID: 6402091454793696805}
+  - {fileID: 7103154274009890282}
   carRampHandler: {fileID: 5273089539268193750}
   soundManager: {fileID: 0}
+  volume: {fileID: 0}
+  maxBoost: 10
+  boostRechargeRate: 1
+  boostDepleteRate: 1
+  boostMultiplier: 3
+  maxBoostChromaticAberration: 0.5
   startingMoveSpeed: 8
   laneChangeTime:
     maxTime: 0.5
@@ -340,6 +345,20 @@ MonoBehaviour:
   carAnimator: {fileID: 1282155709192735574}
   carRampHandler: {fileID: 5273089539268193750}
   playerScript: {fileID: 3063258729448079965}
+--- !u!114 &5551432496289884336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2565140717422665467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24753cf7b6aeaba4b89a549e4710902c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentCamera: {fileID: 0}
+  otherCamera: {fileID: 0}
 --- !u!1 &6461509830335200339
 GameObject:
   m_ObjectHideFlags: 0
@@ -575,6 +594,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3053517723534738139}
   m_SourcePrefab: {fileID: 100100000, guid: e2828b4a63c725a479b7a0cec9919694, type: 3}
+--- !u!4 &856850100332089146 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7675872304673468913, guid: e2828b4a63c725a479b7a0cec9919694,
+    type: 3}
+  m_PrefabInstance: {fileID: 7017181688532795083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1507483394314247163 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8469478393740125488, guid: e2828b4a63c725a479b7a0cec9919694,
@@ -683,6 +708,24 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.003442612
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &6402091454793696805 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5063517320797374226, guid: e2828b4a63c725a479b7a0cec9919694,
+    type: 3}
+  m_PrefabInstance: {fileID: 7017181688532795083}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7037265874335014018 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 57259912239571529, guid: e2828b4a63c725a479b7a0cec9919694,
+    type: 3}
+  m_PrefabInstance: {fileID: 7017181688532795083}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7103154274009890282 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 284132207385592609, guid: e2828b4a63c725a479b7a0cec9919694,
+    type: 3}
+  m_PrefabInstance: {fileID: 7017181688532795083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7415371315531618592 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e2828b4a63c725a479b7a0cec9919694,

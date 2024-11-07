@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DimitriScene.unity
     guid: 5683ee532071506f3b8326e790103a39
+  - enabled: 1
+    path: Assets/Scenes/Garage.unity
+    guid: 1f11e9102000553429dc103002e0fa16
   m_configObjects: {}

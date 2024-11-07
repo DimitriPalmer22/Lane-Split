@@ -1,0 +1,74 @@
+{
+    "name": "MenuControls",
+    "maps": [
+        {
+            "name": "Navigation",
+            "id": "4d06aa9c-bc8a-4944-ba2e-ef4c75f0494a",
+            "actions": [
+                {
+                    "name": "NextVehicle",
+                    "type": "Button",
+                    "id": "cc2e2cec-c4d6-443c-b53a-ac555af91a6c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PreviousVehicle",
+                    "type": "Button",
+                    "id": "0da0023c-e6f0-4c17-bc56-c42fe43d6f99",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SelectVehicle",
+                    "type": "Button",
+                    "id": "d9ea16ac-8d70-40cb-bc72-5b1a4de29356",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c5c9e3c6-f226-4714-a09b-ac1959ffc7b5",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NextVehicle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c8a00122-8284-45b6-9ead-052fe9f22b6c",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PreviousVehicle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "594bc139-974c-4a03-a4c7-a3d82b26a769",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectVehicle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
