@@ -78,7 +78,7 @@ public class VehicleSelectManager : MonoBehaviour
     private void LoadSelectedVehicle()
     {
         // Load the selected vehicle scene
-        SceneManager.LoadScene("DimitriScene" + selectedVehicle);
+        SceneManager.LoadScene("DimitriScene " + selectedVehicle);
         
     }
 }
