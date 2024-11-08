@@ -24,7 +24,19 @@ public class SoundManager : MonoBehaviour
             DontDestroyOnLoad(gameObject); // Persist between scenes
         }
         else
+        {
+            // Check if the other instance has the same song playing
+            if (Instance.musicSource.clip != musicSource.clip)
+            {
+                // Stop the other instance's music
+                Instance.StopMusic();
+
+                // Play the music clip of the new instance
+                Instance.PlayMusic(0);
+            }
+
             Destroy(gameObject);
+        }
     }
 
     private void Start()
