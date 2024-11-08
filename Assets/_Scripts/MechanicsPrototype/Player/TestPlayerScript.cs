@@ -20,20 +20,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     [SerializeField] private CarRampHandler carRampHandler;
     [SerializeField] private SoundManager soundManager;
 
-    [SerializeField] private Volume volume;
-
     [Header("Boost")] [SerializeField] private float maxBoost = 10;
     [SerializeField] [Min(0)] private float boostRechargeDuration = 10;
     [SerializeField] [Min(0)] private float boostDepleteDuration = 4;
     [SerializeField] private float boostMultiplier = 2f;
     [SerializeField] [Min(0)] private float boostLaunchForce = 100;
-
-    [SerializeField] [Min(0)] private float maxBoostChromaticAberration = 0.5f;
-    [SerializeField] private AnimationCurve boostChromaticAberrationCurve;
-    [SerializeField] private CountdownTimer boostChromaticAberrationTimer;
-
-    [SerializeField] [Min(0)] private float maxBoostVignette = 0.4f;
-    [SerializeField] private CountdownTimer boostVignetteTimer = new(.5f, true, true);
 
     [Header("Car Stats")] [SerializeField] [Min(0)]
     private float startingMoveSpeed = 8;
@@ -108,10 +99,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Set the current move speed to the starting move speed
         _currentMoveSpeed = startingMoveSpeed;
-
-        // Set the current boost to the max boost
-        boostVignetteTimer.SetActive(true);
-        boostVignetteTimer.ForceComplete();
     }
 
     // Start is called before the first frame update
@@ -126,29 +113,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         OnNearMiss += LogNearMiss;
         OnNearMiss += NearMissBoostAdd;
 
-        OnBoostReady += _ =>
-        {
-            Debug.Log($"Boost Ready!");
-
-            // Start the chromatic aberration timer
-            boostChromaticAberrationTimer.Reset();
-            boostChromaticAberrationTimer.SetActive(true);
-        };
-
-        // Subscribe to the OnBoostStart event
-        OnBoostStart += _ =>
-        {
-            boostVignetteTimer.Reset();
-            boostVignetteTimer.SetActive(true);
-        };
-
-        // Subscribe to the OnBoostEnd event
-        OnBoostEnd += _ =>
-        {
-            boostVignetteTimer.Reset();
-            boostVignetteTimer.SetActive(true);
-        };
-
         // Add this object to the debug manager
         DebugManager.Instance.AddDebugItem(this);
 
@@ -156,7 +120,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         _lane = TestLevelManager.Instance.LaneCount / 2;
         _oldLane = _lane;
         SetLanePosition(true);
-
 
         // Set up the lane change timer
         laneChangeTime.OnTimerEnd += () =>
@@ -190,8 +153,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     {
         // Update the lane change timer
         laneChangeTime.Update(Time.deltaTime);
-        boostVignetteTimer.Update(Time.deltaTime);
-        boostChromaticAberrationTimer.Update(Time.deltaTime);
 
         // Move the player
         MovePlayer();
@@ -290,40 +251,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
             _isBoosting = false;
         }
-
-        // // Get the chromatic aberration volume component
-        // volume.profile.TryGet(out ChromaticAberration ca);
-        //
-        // // If the current boost is at its max, apply the chromatic aberration
-        // if (_currentBoost >= maxBoost && !_isBoosting)
-        // {
-        //     var randomChrAb = UnityEngine.Random.Range(0, maxBoostChromaticAberration);
-        //
-        //     // Set the intensity of the chromatic aberration
-        //     ca.intensity.Override(randomChrAb);
-        // }
-        // else ca.intensity.Override(0);
-
-
-        var randomChrAb = UnityEngine.Random.Range(500, 1500) / 1000f;
-
-        var ab = boostChromaticAberrationCurve.Evaluate(boostChromaticAberrationTimer.Percentage);
-
-        // Get the chromatic aberration volume component
-        volume.profile.TryGet(out ChromaticAberration ca);
-        ca.intensity.Override(ab * randomChrAb * maxBoostChromaticAberration);
-
-
-        // Get the vignette volume component
-        volume.profile.TryGet(out Vignette vignette);
-
-        // If the player is currently boosting, apply the vignette
-        if (_isBoosting)
-        {
-            // Set the intensity of the vignette
-            vignette.intensity.Override((boostVignetteTimer.Percentage) * maxBoostVignette);
-        }
-        else vignette.intensity.Override((1 - boostVignetteTimer.Percentage) * maxBoostVignette);
     }
 
     private void UpdateNearMiss()
