@@ -7,32 +7,34 @@ using UnityEngine.SceneManagement;
 public class VehicleSelectManager : MonoBehaviour
 {
     // Array to hold vehicle prefabs
-    public GameObject[] vehiclePrefabs; // Array to hold vehicle prefabs
-    // Reference to the current vehicle instance
-    private GameObject currentVehicleInstance; 
-    
-    // Variable to store the selected vehicle index
-    private int selectedVehicle = 0;
+    public GameObject[] vehiclePrefabs;
 
-    private MenuControls controls;
+    // Reference to the current vehicle instance
+    private GameObject _currentVehicleInstance;
+
+    // Variable to store the selected vehicle index
+    private int _selectedVehicleIndex;
+
+    private MenuControls _controls;
 
     // Input system controls
     private void Awake()
     {
-        controls = new MenuControls();
-        controls.Navigation.PreviousVehicle.performed += _ => SelectPreviousVehicle();
-        controls.Navigation.NextVehicle.performed += _ => SelectNextVehicle();
-        controls.Navigation.SelectVehicle.performed += _ => LoadSelectedVehicle();
+        _controls = new MenuControls();
+
+        _controls.Navigation.PreviousVehicle.performed += _ => SelectPreviousVehicle();
+        _controls.Navigation.NextVehicle.performed += _ => SelectNextVehicle();
+        _controls.Navigation.SelectVehicle.performed += _ => LoadSelectedVehicle();
     }
 
     private void OnEnable()
     {
-        controls.Navigation.Enable();
+        _controls.Navigation.Enable();
     }
 
     private void OnDisable()
     {
-        controls.Navigation.Disable();
+        _controls.Navigation.Disable();
     }
 
     private void Start()
@@ -43,22 +45,24 @@ public class VehicleSelectManager : MonoBehaviour
     // Function to select the previous vehicle
     private void SelectPreviousVehicle()
     {
-        selectedVehicle--;
-        if (selectedVehicle < 0)
+        _selectedVehicleIndex--;
+        if (_selectedVehicleIndex < 0)
         {
-            selectedVehicle = vehiclePrefabs.Length - 1;
+            _selectedVehicleIndex = vehiclePrefabs.Length - 1;
         }
+
         InstantiateSelectedVehicle();
     }
 
     // Function to select the next vehicle
     private void SelectNextVehicle()
     {
-        selectedVehicle++;
-        if (selectedVehicle > vehiclePrefabs.Length - 1)
+        _selectedVehicleIndex++;
+        if (_selectedVehicleIndex > vehiclePrefabs.Length - 1)
         {
-            selectedVehicle = 0;
+            _selectedVehicleIndex = 0;
         }
+
         InstantiateSelectedVehicle();
     }
 
@@ -66,19 +70,19 @@ public class VehicleSelectManager : MonoBehaviour
     private void InstantiateSelectedVehicle()
     {
         // Destroy the current vehicle instance if it exists
-        if (currentVehicleInstance != null)
+        if (_currentVehicleInstance != null)
         {
-            Destroy(currentVehicleInstance);
+            Destroy(_currentVehicleInstance);
         }
 
         // Instantiate the selected vehicle prefab and store the instance
-        currentVehicleInstance = Instantiate(vehiclePrefabs[selectedVehicle], transform.position, transform.rotation);
+        _currentVehicleInstance = Instantiate(vehiclePrefabs[_selectedVehicleIndex], transform.position, transform.rotation);
     }
+
     // Function to load the selected vehicle
     private void LoadSelectedVehicle()
     {
         // Load the selected vehicle scene
-        SceneManager.LoadScene("DimitriScene " + selectedVehicle);
-        
+        SceneManager.LoadScene("DimitriScene " + _selectedVehicleIndex);
     }
 }
