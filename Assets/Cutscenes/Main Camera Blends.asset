@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Main Camera Blends
   m_EditorClassIdentifier: 
   m_CustomBlends:
-  - m_From: Vcam
-    m_To: Tunnel Cam
+  - m_From: DefaultCam
+    m_To: TunnelCam
     m_Blend:
       m_Style: 7
       m_Time: 2
@@ -42,8 +42,8 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
-  - m_From: Tunnel Cam
-    m_To: Vcam
+  - m_From: TunnelCam
+    m_To: DefaultCam
     m_Blend:
       m_Style: 5
       m_Time: 2
