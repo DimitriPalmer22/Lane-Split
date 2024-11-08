@@ -13,6 +13,7 @@ public class NewBehaviourScript : MonoBehaviour
     [SerializeField] private float meshDestroyDelay = 3f;
     [SerializeField] private Transform positionToSpawn;
     [SerializeField] private Vector3 meshSpawnOffset;
+    [SerializeField] private float meshMoveAmount = 1f;
 
     [Header("Shader Related")] [SerializeField]
     private Material mat;
@@ -24,6 +25,8 @@ public class NewBehaviourScript : MonoBehaviour
     private bool _isTrailActive;
 
     private SkinnedMeshRenderer[] _skinnedMeshRenderers;
+
+    private readonly HashSet<GameObject> _spawnedObjects = new HashSet<GameObject>();
 
     private void Start()
     {
@@ -50,6 +53,15 @@ public class NewBehaviourScript : MonoBehaviour
     {
         // Update the timer
         meshRefreshRate.Update(Time.deltaTime);
+
+        // Update the spawned object positions
+        UpdateSpawnedObjectPositions();
+    }
+
+    private void UpdateSpawnedObjectPositions()
+    {
+        foreach (var obj in _spawnedObjects)
+            obj.transform.position += Vector3.forward * (meshMoveAmount * Time.deltaTime);
     }
 
     private void SpawnTrailObject()
@@ -65,10 +77,17 @@ public class NewBehaviourScript : MonoBehaviour
             var rotation = currentRenderer.transform.rotation;
 
             var gObj = new GameObject();
-            gObj.transform.SetPositionAndRotation(
-                positionToSpawn.position + meshSpawnOffset,
-                rotation
-            );
+            // gObj.transform.SetPositionAndRotation(
+            //     positionToSpawn.position + meshSpawnOffset,
+            //     rotation
+            // );
+
+            // Add the spawned object to the spawned objects list
+            _spawnedObjects.Add(gObj);
+
+            gObj.transform.parent = positionToSpawn;
+            gObj.transform.localPosition = meshSpawnOffset;
+            gObj.transform.rotation = rotation;
 
             var meshRenderer = gObj.AddComponent<MeshRenderer>();
             var meshFilter = gObj.AddComponent<MeshFilter>();
@@ -81,8 +100,20 @@ public class NewBehaviourScript : MonoBehaviour
 
             StartCoroutine(AnimateMaterialFloat(meshRenderer.material, 0, shaderVarRate, shaderVarRefreshRate));
 
-            Destroy(gObj, meshDestroyDelay);
+            // Destroy the spawned object after a delay
+            StartCoroutine(DestroySpawnedObject(gObj));
         }
+    }
+
+    private IEnumerator DestroySpawnedObject(GameObject obj)
+    {
+        yield return new WaitForSeconds(meshDestroyDelay);
+
+        // Remove the object from the spawned objects list
+        _spawnedObjects.Remove(obj);
+
+        // Destroy the object
+        Destroy(obj);
     }
 
     // private IEnumerator ActivateTrail(float timeActive)

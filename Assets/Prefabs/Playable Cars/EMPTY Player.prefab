@@ -350,6 +350,7 @@ MonoBehaviour:
   meshDestroyDelay: 3
   positionToSpawn: {fileID: 6001444659906946305}
   meshSpawnOffset: {x: 0, y: 0, z: 0}
+  meshMoveAmount: -20
   mat: {fileID: 2100000, guid: 12c027c689c5703459560ccf0dc42fea, type: 2}
   shaderVarRef: _Alpha
   shaderVarRate: 0.1
