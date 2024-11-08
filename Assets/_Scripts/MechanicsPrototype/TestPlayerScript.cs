@@ -27,7 +27,11 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     [SerializeField] [Min(0)] private float boostDepleteDuration = 4;
     [SerializeField] private float boostMultiplier = 2f;
     [SerializeField] [Min(0)] private float boostLaunchForce = 100;
+
     [SerializeField] [Min(0)] private float maxBoostChromaticAberration = 0.5f;
+    [SerializeField] private AnimationCurve boostChromaticAberrationCurve;
+    [SerializeField] private CountdownTimer boostChromaticAberrationTimer;
+
     [SerializeField] [Min(0)] private float maxBoostVignette = 0.4f;
     [SerializeField] private CountdownTimer boostVignetteTimer = new(.5f, true, true);
 
@@ -58,6 +62,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     #endregion
 
     #region Events
+
+    public Action<TestPlayerScript> OnBoostReady;
 
     public event Action<TestPlayerScript> OnBoostStart;
 
@@ -120,6 +126,15 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         OnNearMiss += LogNearMiss;
         OnNearMiss += NearMissBoostAdd;
 
+        OnBoostReady += _ =>
+        {
+            Debug.Log($"Boost Ready!");
+
+            // Start the chromatic aberration timer
+            boostChromaticAberrationTimer.Reset();
+            boostChromaticAberrationTimer.SetActive(true);
+        };
+
         // Subscribe to the OnBoostStart event
         OnBoostStart += _ =>
         {
@@ -176,6 +191,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         // Update the lane change timer
         laneChangeTime.Update(Time.deltaTime);
         boostVignetteTimer.Update(Time.deltaTime);
+        boostChromaticAberrationTimer.Update(Time.deltaTime);
 
         // Move the player
         MovePlayer();
@@ -263,7 +279,14 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Add boost
         else
+        {
+            var wasBoostReady = _currentBoost >= maxBoost;
+
             AddBoost(BoostRechargeRate * Time.deltaTime);
+
+            if (_currentBoost >= maxBoost && !wasBoostReady)
+                OnBoostReady.Invoke(this);
+        }
 
         // If the boost is empty, set the boost flag to false
         if (_currentBoost <= 0)
@@ -275,19 +298,28 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             _isBoosting = false;
         }
 
+        // // Get the chromatic aberration volume component
+        // volume.profile.TryGet(out ChromaticAberration ca);
+        //
+        // // If the current boost is at its max, apply the chromatic aberration
+        // if (_currentBoost >= maxBoost && !_isBoosting)
+        // {
+        //     var randomChrAb = UnityEngine.Random.Range(0, maxBoostChromaticAberration);
+        //
+        //     // Set the intensity of the chromatic aberration
+        //     ca.intensity.Override(randomChrAb);
+        // }
+        // else ca.intensity.Override(0);
+
+
+        var randomChrAb = UnityEngine.Random.Range(500, 1500) / 1000f;
+
+        var ab = boostChromaticAberrationCurve.Evaluate(boostChromaticAberrationTimer.Percentage);
 
         // Get the chromatic aberration volume component
         volume.profile.TryGet(out ChromaticAberration ca);
+        ca.intensity.Override(ab * randomChrAb * maxBoostChromaticAberration);
 
-        // If the current boost is at its max, apply the chromatic aberration
-        if (_currentBoost >= maxBoost && !_isBoosting)
-        {
-            var randomChrAb = UnityEngine.Random.Range(0, maxBoostChromaticAberration);
-
-            // Set the intensity of the chromatic aberration
-            ca.intensity.Override(randomChrAb);
-        }
-        else ca.intensity.Override(0);
 
         // Get the vignette volume component
         volume.profile.TryGet(out Vignette vignette);
