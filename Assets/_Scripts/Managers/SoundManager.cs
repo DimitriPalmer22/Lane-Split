@@ -15,6 +15,8 @@ public class SoundManager : MonoBehaviour
     [Header("Audio Clips")] [SerializeField]
     private Sound[] musicClips;
 
+    private Sound _currentMusic;
+
     private void Awake()
     {
         // Singleton pattern setup
@@ -26,13 +28,13 @@ public class SoundManager : MonoBehaviour
         else
         {
             // Check if the other instance has the same song playing
-            if (Instance.musicSource.clip != musicSource.clip)
+            if (musicClips.Length > 0 && Instance._currentMusic.Clip != musicClips[0].Clip)
             {
                 // Stop the other instance's music
                 Instance.StopMusic();
 
                 // Play the music clip of the new instance
-                Instance.PlayMusic(0);
+                Instance.PlayMusic(musicClips[0]);
             }
 
             Destroy(gameObject);
@@ -79,8 +81,27 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        musicSource.clip = musicClips[index].Clip;
-        musicSource.volume = musicClips[index].Volume;
+        PlayMusic(musicClips[index]);
+    }
+
+    public void PlayMusic(Sound sound)
+    {
+        if (sound == null)
+        {
+            Debug.LogWarning("SoundManager: Invalid sound.");
+            return;
+        }
+
+        if (sound.Clip == null)
+        {
+            Debug.LogWarning("SoundManager: Invalid sound clip.");
+            return;
+        }
+
+        _currentMusic = sound;
+
+        musicSource.clip = sound.Clip;
+        musicSource.volume = sound.Volume;
 
         musicSource.Play();
     }
