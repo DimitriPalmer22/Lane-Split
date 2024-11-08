@@ -8,8 +8,16 @@ using UnityEngine.Serialization;
 
 public class VehicleSelectManager : MonoBehaviour
 {
+    #region Serialized Fields
+
     // Array to hold vehicle prefabs
     [SerializeField] private VehicleSelectionInfo[] vehiclePrefabs;
+
+    [SerializeField] [Min(0)] private float rotationsPerSecond;
+
+    #endregion
+
+    #region Private Fields
 
     // Reference to the current vehicle instance
     private GameObject _currentVehicleInstance;
@@ -17,6 +25,10 @@ public class VehicleSelectManager : MonoBehaviour
     // Variable to store the selected vehicle index
     private int _selectedVehicleIndex;
 
+    // The current rotation of the vehicle around the y-axis
+    private float _currentRotation;
+
+    #endregion
 
     private void Start()
     {
@@ -42,6 +54,21 @@ public class VehicleSelectManager : MonoBehaviour
                 LoadSelectedVehicle();
                 break;
         }
+    }
+
+    private void Update()
+    {
+        // Update the rotation of the vehicle
+        UpdateRotation();
+    }
+
+    private void UpdateRotation()
+    {
+        var rotationAmount = 360 * rotationsPerSecond * Time.deltaTime;
+        _currentRotation = (_currentRotation + rotationAmount) % 360;
+
+        if (_currentVehicleInstance != null)
+            _currentVehicleInstance.transform.rotation = Quaternion.Euler(0, _currentRotation, 0);
     }
 
     // Function to select the previous vehicle
