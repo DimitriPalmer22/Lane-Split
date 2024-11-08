@@ -278,15 +278,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             AddBoost(-BoostDepleteRate * Time.deltaTime);
 
         // Add boost
-        else
-        {
-            var wasBoostReady = _currentBoost >= maxBoost;
+        else AddBoost(BoostRechargeRate * Time.deltaTime);
 
-            AddBoost(BoostRechargeRate * Time.deltaTime);
-
-            if (_currentBoost >= maxBoost && !wasBoostReady)
-                OnBoostReady.Invoke(this);
-        }
 
         // If the boost is empty, set the boost flag to false
         if (_currentBoost <= 0)
@@ -479,7 +472,12 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private void AddBoost(float amount)
     {
+        var wasBoostReady = _currentBoost >= maxBoost;
+
         _currentBoost = Mathf.Clamp(_currentBoost + amount, 0, maxBoost);
+
+        if (_currentBoost >= maxBoost && !wasBoostReady)
+            OnBoostReady.Invoke(this);
     }
 
     public void MultiplyMoveSpeed(float mult)
