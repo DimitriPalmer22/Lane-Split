@@ -957,8 +957,18 @@ MonoBehaviour:
   laneScaleX: 0.875
   laneScaleZ: 1
   obstacleChance: 0.024
-  laneObjects:
-  - {fileID: 6004813888146081602, guid: a9276840d9cc41b44a850378c94d0d26, type: 3}
+  specialLaneChance: 1
+  normalLaneObjects:
+  - prefab: {fileID: 9180717958520392753, guid: c7fb70b14458ac642a873639c6420ba8,
+      type: 3}
+    weight: 1
+  specialLaneObjects:
+  - prefab: {fileID: 6004813888146081602, guid: a9276840d9cc41b44a850378c94d0d26,
+      type: 3}
+    weight: 1
+  - prefab: {fileID: 3234117105055338279, guid: 91045f1010d24c949b6e8fa5dd94545a,
+      type: 3}
+    weight: 1
   vehicles:
   - prefab: {fileID: 5794202586995745447, guid: 0cb5b874020e75a45930e49d7d5a9f73,
       type: 3}
