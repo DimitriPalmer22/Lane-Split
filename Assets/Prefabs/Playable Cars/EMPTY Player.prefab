@@ -305,16 +305,16 @@ MonoBehaviour:
     clip: {fileID: 0}
     volume: 1
   nearMissSound:
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: fdedea47a8523ba4bb7cc1541454b6d4, type: 3}
     volume: 1
   boostReadySound:
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 94a4b41dca00f3d48b5d46bec39e85ff, type: 3}
     volume: 1
   boostSound:
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: a3057d280875d544b89311b312d9d63e, type: 3}
     volume: 1
   crashSound:
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: d28ad3cce42ba7646b7a7c698f180a90, type: 3}
     volume: 1
 --- !u!114 &1549019089654101146
 MonoBehaviour:

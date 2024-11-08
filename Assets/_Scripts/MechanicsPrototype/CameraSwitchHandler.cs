@@ -14,6 +14,9 @@ public class CameraSwitchHandler : MonoBehaviour
     
     private void Start()
     {
+        //get component vcam
+        currentCamera = GameObject.Find("DefaultCam").GetComponent<CinemachineVirtualCamera>();
+        otherCamera = GameObject.Find("TunnelCam").GetComponent<CinemachineVirtualCamera>();
         // Set the current camera to the highest priority
         currentCamera.Priority = 20;
         
