@@ -65,6 +65,12 @@ public class CountdownTimer
         IsActive = active;
     }
 
+    public void ForceComplete()
+    {
+        TimeLeft = 0;
+        OnTimerEnd?.Invoke();
+    }
+
     public void Start() => SetActive(true);
 
     public void Stop() => SetActive(false);

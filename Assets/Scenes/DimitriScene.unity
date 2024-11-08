@@ -956,8 +956,6 @@ MonoBehaviour:
   obstacleChance: 0.024
   laneObjects:
   - {fileID: 6004813888146081602, guid: a9276840d9cc41b44a850378c94d0d26, type: 3}
-  laneMaterial: {fileID: 2100000, guid: 032b8f13b6327b82b88bcc941210d7da, type: 2}
-  obstacleMaterial: {fileID: 2100000, guid: c4c6840fba3a73e4983e19c802076db1, type: 2}
   vehicles:
   - prefab: {fileID: 5794202586995745447, guid: 0cb5b874020e75a45930e49d7d5a9f73,
       type: 3}
