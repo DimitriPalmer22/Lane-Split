@@ -26,6 +26,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     [SerializeField] [Min(0)] private float boostRechargeRate = 1;
     [SerializeField] [Min(0)] private float boostDepleteRate = 1;
     [SerializeField] private float boostMultiplier = 2f;
+    [SerializeField] [Min(0)] private float boostLaunchForce = 100;
     [SerializeField] [Min(0)] private float maxBoostChromaticAberration = 0.5f;
 
     [Header("Car Stats")] [SerializeField] [Min(0)]
@@ -439,31 +440,37 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             return;
 
         // Check if the player has collided with an obstacle, if so kill the player
-        if (other.CompareTag("Obstacle"))
+        if (!other.CompareTag("Obstacle"))
+            return;
+
+        Debug.Log($"Player collided with: {other.name} ({other.tag})");
+
+        // Kill the player if they are vulnerable
+        if (IsVulnerable)
+            KillPlayer();
+
+        // Otherwise, launch the obstacle at a random angle
+        else if (_isBoosting)
         {
-            Debug.Log($"Player collided with: {other.name} ({other.tag})");
+            // Get the rigidbody of the obstacle
+            var obstacle = other.GetComponent<ObstacleScript>();
+            var rb = obstacle.Rigidbody;
 
-            if (IsVulnerable)
-                KillPlayer();
+            // Randomize a float between 0 and 1
+            var random = UnityEngine.Random.Range(-1f, 1f);
 
-            else if (_isBoosting)
-            {
-                // Get the rigidbody of the obstacle
-                var rb = other.GetComponent<Rigidbody>();
+            // Create a new Vector3 for launch Angle
+            var launchAngle = (Vector3.up + transform.forward + (Vector3.right * random)).normalized;
+            // var launchAngle = Vector3.up;
 
-                // Randomize a float between 0 and 1
-                var random = UnityEngine.Random.Range(-1f, 1f);
+            // Set the rb to use gravity
+            rb.useGravity = true;
 
-                // Create a new Vector3 for launch Angle
-                // var launchAngle = Vector3.up + transform.forward + Vector3.right * random;
-                var launchAngle = Vector3.up;
+            // Set the rb to be non-kinematic
+            rb.isKinematic = false;
 
-                // Set the rb to use gravity
-                rb.useGravity = true;
-
-                // Add a force to the obstacle
-                rb.AddForce(launchAngle * 1000, ForceMode.Impulse);
-            }
+            // Add a force to the obstacle
+            rb.AddForce(launchAngle * boostLaunchForce, ForceMode.Impulse);
         }
     }
 

@@ -167,6 +167,7 @@ MonoBehaviour:
   boostRechargeRate: 1
   boostDepleteRate: 2.5
   boostMultiplier: 2
+  boostLaunchForce: 45
   maxBoostChromaticAberration: 1
   startingMoveSpeed: 12
   laneChangeTime:

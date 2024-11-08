@@ -57,22 +57,15 @@ public class TestLaneScript : MonoBehaviour
     private void InitializeObstacle(GameObject obstaclePrefab)
     {
         // Create the obstacle
-        // var obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
         var obstacle = Instantiate(obstaclePrefab, transform, true);
         obstacle.name += "Obstacle";
 
         obstacle.transform.localPosition = new Vector3(0, 1, 0);
 
-        // // Add an obstacleScript to the obstacle
-        // _obstacle = obstacle.AddComponent<ObstacleScript>();
+        // Get the obstacle script
         _obstacle = obstacle.GetComponent<ObstacleScript>();
 
-        Debug.Log($"Got obstacle: {_obstacle}");
-
-        // Add a rigidbody to the obstacle
-        // var rb = obstacle.AddComponent<Rigidbody>();
-        // rb.useGravity = false;
-
+        // Initialize the obstacle
         _obstacle.Initialize(this);
     }
 
