@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,72 +7,135 @@ public class NewBehaviourScript : MonoBehaviour
 {
     public float activeTime = 2f;
 
-    [Header("Mesh Related")]
-    public float meshRefreshRate = 0.1f;
-    public float meshDestroyDelay = 3f;
-    public Transform positionToSpawn;
+    [Header("Mesh Related")] [SerializeField]
+    private CountdownTimer meshRefreshRate;
 
-    [Header("Shader Related")]
-    public Material mat;
-    public string shaderVarRef;
-    public float shaderVarRate = 0.1f;
-    public float shaderVarRefreshRate = 0.05f;
+    [SerializeField] private float meshDestroyDelay = 3f;
+    [SerializeField] private Transform positionToSpawn;
+    [SerializeField] private Vector3 meshSpawnOffset;
 
-    private bool isTrailActive;
-    private SkinnedMeshRenderer[] skinnedMeshRenderers;
-    // Update is called once per frame
-    void Update()
+    [Header("Shader Related")] [SerializeField]
+    private Material mat;
+
+    [SerializeField] private string shaderVarRef;
+    [SerializeField] private float shaderVarRate = 0.1f;
+    [SerializeField] private float shaderVarRefreshRate = 0.05f;
+
+    private bool _isTrailActive;
+
+    private SkinnedMeshRenderer[] _skinnedMeshRenderers;
+
+    private void Start()
     {
-        if(Input.GetKeyDown (KeyCode.Space) &&  !isTrailActive)
+        // Get the TestPlayerScript
+        var testPlayerScript = GetComponent<TestPlayerScript>();
+
+        // Connect to the boost event
+        testPlayerScript.OnBoostStart += _ => _isTrailActive = true;
+        testPlayerScript.OnBoostEnd += _ => _isTrailActive = false;
+
+        // Connect to the countdown timer event
+        meshRefreshRate.Reset();
+        meshRefreshRate.SetActive(true);
+        meshRefreshRate.OnTimerEnd += () => meshRefreshRate.Reset();
+        meshRefreshRate.OnTimerEnd += () =>
         {
-            isTrailActive = true;
-            StartCoroutine(ActivateTrail(activeTime));
+            if (_isTrailActive)
+                SpawnTrailObject();
+        };
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
+        // Update the timer
+        meshRefreshRate.Update(Time.deltaTime);
+    }
+
+    private void SpawnTrailObject()
+    {
+        Debug.Log($"Spawning trail object at {positionToSpawn.position}");
+
+        if (_skinnedMeshRenderers == null)
+            _skinnedMeshRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+
+        foreach (var currentRenderer in _skinnedMeshRenderers)
+        {
+            // Get the position, rotation, and scale of the current renderer's object
+            var rotation = currentRenderer.transform.rotation;
+
+            var gObj = new GameObject();
+            gObj.transform.SetPositionAndRotation(
+                positionToSpawn.position + meshSpawnOffset,
+                rotation
+            );
+
+            var meshRenderer = gObj.AddComponent<MeshRenderer>();
+            var meshFilter = gObj.AddComponent<MeshFilter>();
+
+            var mesh = new Mesh();
+            currentRenderer.BakeMesh(mesh);
+
+            meshFilter.mesh = mesh;
+            meshRenderer.material = mat;
+
+            StartCoroutine(AnimateMaterialFloat(meshRenderer.material, 0, shaderVarRate, shaderVarRefreshRate));
+
+            Destroy(gObj, meshDestroyDelay);
         }
     }
 
-    IEnumerator ActivateTrail (float timeActive)
+    // private IEnumerator ActivateTrail(float timeActive)
+    // {
+    //     while (timeActive > 0)
+    //     {
+    //         timeActive -= meshRefreshRate;
+    //
+    //         if (_skinnedMeshRenderers == null)
+    //             _skinnedMeshRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+    //
+    //         for (var i = 0; i < _skinnedMeshRenderers.Length; i++)
+    //         {
+    //             var currentRenderer = _skinnedMeshRenderers[i];
+    //
+    //             // Get the position, rotation, and scale of the current renderer's object
+    //             var rotation = currentRenderer.transform.rotation;
+    //
+    //             var gObj = new GameObject();
+    //             gObj.transform.SetPositionAndRotation(
+    //                 positionToSpawn.position + meshSpawnOffset,
+    //                 rotation
+    //             );
+    //
+    //             var meshRenderer = gObj.AddComponent<MeshRenderer>();
+    //             var meshFilter = gObj.AddComponent<MeshFilter>();
+    //
+    //             var mesh = new Mesh();
+    //             currentRenderer.BakeMesh(mesh);
+    //
+    //             meshFilter.mesh = mesh;
+    //             meshRenderer.material = mat;
+    //
+    //             StartCoroutine(AnimateMaterialFloat(meshRenderer.material, 0, shaderVarRate, shaderVarRefreshRate));
+    //
+    //             Destroy(gObj, meshDestroyDelay);
+    //         }
+    //
+    //         yield return new WaitForSeconds(meshRefreshRate);
+    //     }
+    //
+    //     _isTrailActive = false;
+    // }
+
+    private IEnumerator AnimateMaterialFloat(Material mat, float goal, float rate, float refreshRate)
     {
-        while (timeActive > 0)
-        { 
-            timeActive -= meshRefreshRate;
-
-            if(skinnedMeshRenderers == null)
-                skinnedMeshRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
-
-            for(int i=0; i<skinnedMeshRenderers.Length; i++)
-            {
-                GameObject gObj = new GameObject();
-                gObj.transform.SetPositionAndRotation(positionToSpawn.position, positionToSpawn.rotation);
-
-                MeshRenderer mr = gObj.AddComponent<MeshRenderer>();
-                MeshFilter mf = gObj.AddComponent<MeshFilter>();
-
-                Mesh mesh = new Mesh();
-                skinnedMeshRenderers[i].BakeMesh(mesh);
-
-                mf.mesh = mesh;
-                mr.material = mat;
-
-                StartCoroutine(AnimateMaterialFloat(mr.material, 0, shaderVarRate, shaderVarRefreshRate));
-
-                Destroy(gObj, meshDestroyDelay);
-            }
-
-            yield return new WaitForSeconds(meshRefreshRate);
-        }
-
-        isTrailActive = false;
-    }
-
-    IEnumerator AnimateMaterialFloat (Material mat, float goal, float rate, float refreshRate)
-    {
-        float valueToAnimate = mat.GetFloat(shaderVarRef);
+        var valueToAnimate = mat.GetFloat(shaderVarRef);
 
         while (valueToAnimate > goal)
         {
             valueToAnimate -= rate;
             mat.SetFloat(shaderVarRef, valueToAnimate);
-            yield return new WaitForSeconds (refreshRate);
+            yield return new WaitForSeconds(refreshRate);
         }
     }
 }
