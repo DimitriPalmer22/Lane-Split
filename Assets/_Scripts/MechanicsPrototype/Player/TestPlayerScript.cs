@@ -18,7 +18,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     [SerializeField] private Transform[] wheels;
     [SerializeField] private CarRampHandler carRampHandler;
-    [SerializeField] private SoundManager soundManager;
 
     [Header("Boost")] [SerializeField] private float maxBoost = 10;
     [SerializeField] [Min(0)] private float boostRechargeDuration = 10;
@@ -54,7 +53,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     #region Events
 
-    public Action<TestPlayerScript> OnBoostReady;
+    public event Action<TestPlayerScript> OnBoostReady;
 
     public event Action<TestPlayerScript> OnBoostStart;
 
@@ -67,6 +66,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     public event Action<TestPlayerScript> OnLaneChangeStart;
 
     public event Action<TestPlayerScript> OnLaneChangeEnd;
+
+    public event Action<TestPlayerScript> OnCrash;
 
     #endregion
 
@@ -395,6 +396,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
     {
         // Set the player to dead
         _isAlive = false;
+
+        OnCrash?.Invoke(this);
     }
 
     private void AddBoost(float amount)
@@ -404,7 +407,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         _currentBoost = Mathf.Clamp(_currentBoost + amount, 0, maxBoost);
 
         if (_currentBoost >= maxBoost && !wasBoostReady)
-            OnBoostReady.Invoke(this);
+            OnBoostReady?.Invoke(this);
     }
 
     public void MultiplyMoveSpeed(float mult)

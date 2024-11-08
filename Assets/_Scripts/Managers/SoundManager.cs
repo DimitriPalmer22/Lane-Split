@@ -13,26 +13,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource musicSource;
 
     [Header("Audio Clips")] [SerializeField]
-    private AudioClip slomoClip;
-
-    [SerializeField] private AudioClip[] musicClips;
-
-    [Header("References")] [SerializeField]
-    private CarRampHandler carRampHandler; // Reference to CarRampHandler
-
-    //reference to the test player script
-    [SerializeField] private TestPlayerScript playerScript;
-    [Header("Settings")] [SerializeField] private float slowTimeScale = 0.5f; // Time scale for slow-motion
-    [SerializeField] private float slowMotionDuration = 1.5f; //duration of the slow motion effect
-
-
-    private void OnEnable()
-    {
-    }
-
-    private void OnDisable()
-    {
-    }
+    private Sound[] musicClips;
 
     private void Awake()
     {
@@ -43,44 +24,53 @@ public class SoundManager : MonoBehaviour
             DontDestroyOnLoad(gameObject); // Persist between scenes
         }
         else
-        {
             Destroy(gameObject);
-        }
     }
 
     private void Start()
     {
-        carRampHandler.OnRampEnter += OnRampEnter;
-    }
+        // Play a random music clip
+        var randomIndex = musicClips.Length > 1
+            ? UnityEngine.Random.Range(0, musicClips.Length)
+            : 0;
 
-    // Called when the ramp event is triggered
-    public void OnRampEnter()
-    {
-        // Play the slow-motion sound effect
-        PlayOneShot(slomoClip);
+        PlayMusic(randomIndex);
     }
 
     // Method to play sound effects
-    public void PlayOneShot(AudioClip clip)
+    public void PlayOneShot(Sound sound)
     {
-        if (sfxSource != null && clip != null)
-            sfxSource.PlayOneShot(clip);
-        else
-            Debug.LogWarning("SoundManager: Missing AudioSource or AudioClip.");
+        // Return if the sound is null
+        if (sound == null)
+        {
+            Debug.LogWarning("SoundManager: Invalid sound.");
+            return;
+        }
+
+        // Return if the sound clip is null
+        if (sound.Clip == null)
+        {
+            Debug.LogWarning("SoundManager: Invalid sound clip.");
+            return;
+        }
+
+        // Play the sound effect
+        sfxSource.PlayOneShot(sound.Clip, sound.Volume);
     }
 
     // Play music by index
     public void PlayMusic(int index)
     {
-        if (index >= 0 && index < musicClips.Length)
-        {
-            musicSource.clip = musicClips[index];
-            musicSource.Play();
-        }
-        else
+        if (index < 0 || index >= musicClips.Length)
         {
             Debug.LogWarning("SoundManager: Invalid music index.");
+            return;
         }
+
+        musicSource.clip = musicClips[index].Clip;
+        musicSource.volume = musicClips[index].Volume;
+
+        musicSource.Play();
     }
 
     // Stop the currently playing music

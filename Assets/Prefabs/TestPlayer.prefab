@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 5273089539268193750}
   - component: {fileID: 3487438271040591168}
   - component: {fileID: 5564984738939123994}
+  - component: {fileID: 3926642966800612296}
   m_Layer: 0
   m_Name: TestPlayer
   m_TagString: Untagged
@@ -163,7 +164,6 @@ MonoBehaviour:
   - {fileID: 1490050634304363718}
   carRampHandler: {fileID: 5273089539268193750}
   soundManager: {fileID: 0}
-  volume: {fileID: 0}
   maxBoost: 10
   boostRechargeDuration: 10
   boostDepleteDuration: 4
@@ -253,6 +253,36 @@ MonoBehaviour:
   maxBoostVignette: 0.4
   boostVignetteTimer:
     maxTime: 0.125
+--- !u!114 &3926642966800612296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2565140717422665467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17e055fbb6e7417b8457f00e9be0fc9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rampSound:
+    clip: {fileID: 8300000, guid: e3eb609335b33964190b4af0889f749f, type: 3}
+    volume: 0.75
+  laneChangeSound:
+    clip: {fileID: 0}
+    volume: 1
+  nearMissSound:
+    clip: {fileID: 0}
+    volume: 1
+  boostReadySound:
+    clip: {fileID: 0}
+    volume: 1
+  boostSound:
+    clip: {fileID: 0}
+    volume: 1
+  crashSound:
+    clip: {fileID: 0}
+    volume: 1
 --- !u!1 &5917583670159527973
 GameObject:
   m_ObjectHideFlags: 0
