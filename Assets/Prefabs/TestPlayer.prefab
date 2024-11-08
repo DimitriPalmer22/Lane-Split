@@ -163,7 +163,6 @@ MonoBehaviour:
   - {fileID: 3379402073541732105}
   - {fileID: 1490050634304363718}
   carRampHandler: {fileID: 5273089539268193750}
-  soundManager: {fileID: 0}
   maxBoost: 10
   boostRechargeDuration: 10
   boostDepleteDuration: 4
@@ -224,6 +223,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   volume: {fileID: 0}
   maxBoostChromaticAberration: 4
+  boostChromaticAberrationTimer:
+    maxTime: 0.25
   boostChromaticAberrationCurve:
     serializedVersion: 2
     m_Curve:
@@ -248,11 +249,45 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  boostChromaticAberrationTimer:
-    maxTime: 0.25
   maxBoostVignette: 0.4
   boostVignetteTimer:
     maxTime: 0.125
+  maxBoostLensDistortion: -0.75
+  boostLensDistortionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.03125
+      value: 1
+      inSlope: -0.035768695
+      outSlope: -0.035768695
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.14772727
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.022545135
+      outSlope: -0.022545135
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.46875
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  boostLensDistortionTimer:
+    maxTime: 4
 --- !u!114 &3926642966800612296
 MonoBehaviour:
   m_ObjectHideFlags: 0
