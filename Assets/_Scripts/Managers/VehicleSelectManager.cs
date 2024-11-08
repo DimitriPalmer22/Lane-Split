@@ -74,8 +74,6 @@ public class VehicleSelectManager : MonoBehaviour
     // Function to select the previous vehicle
     private void SelectPreviousVehicle()
     {
-        Debug.Log("Selecting previous vehicle");
-
         // Cycle through the vehicles
         _selectedVehicleIndex = (_selectedVehicleIndex - 1) % vehiclePrefabs.Length;
 
@@ -88,8 +86,6 @@ public class VehicleSelectManager : MonoBehaviour
     // Function to select the next vehicle
     private void SelectNextVehicle()
     {
-        Debug.Log("Selecting next vehicle");
-
         // Cycle through the vehicles
         _selectedVehicleIndex = (_selectedVehicleIndex + 1) % vehiclePrefabs.Length;
 
@@ -111,8 +107,11 @@ public class VehicleSelectManager : MonoBehaviour
     // Function to load the selected vehicle
     private void LoadSelectedVehicle()
     {
+        // Set the player car prefab in the game manager
+        GameManager.Instance.SetPlayerCarPrefab(vehiclePrefabs[_selectedVehicleIndex].GameVehiclePrefab);
+
         // Load the selected vehicle scene
-        SceneManager.LoadScene("DimitriScene " + _selectedVehicleIndex);
+        SceneManager.LoadScene("DimitriScene");
     }
 
     [Serializable]
