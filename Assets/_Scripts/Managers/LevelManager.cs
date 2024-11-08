@@ -8,16 +8,17 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
-    public bool IsRunning => player.IsAlive;
+    public bool IsRunning => Player.IsAlive;
 
-    [SerializeField] private TestPlayerScript player;
-
-    public TestPlayerScript Player => player;
+    public TestPlayerScript Player => TestPlayerScript.Instance;
 
     private void Awake()
     {
         // Update the instance
         Instance = this;
+
+        // Instantiate the player prefab from the game manager
+        Instantiate(GameManager.Instance.PlayerCarPrefab);
     }
 
     private void Start()

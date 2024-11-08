@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject playerCarPrefab;
 
+    public GameObject PlayerCarPrefab => playerCarPrefab;
+
     private void Awake()
     {
         // Determine if the instance is null

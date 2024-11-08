@@ -35,6 +35,8 @@ public class VehicleSelectManager : MonoBehaviour
         // Input manager to subscribe to the swipe event
         InputManager.Instance.OnSwipe += OnSwipeSelectVehicle;
 
+        InputManager.Instance.PlayerControls.Gameplay.Boost.performed += _ => LoadSelectedVehicle();
+
         InstantiateSelectedVehicle();
     }
 

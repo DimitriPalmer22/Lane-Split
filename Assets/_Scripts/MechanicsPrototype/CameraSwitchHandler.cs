@@ -32,9 +32,7 @@ public class CameraSwitchHandler : MonoBehaviour
     private void SwitchPriority()
     {
         // Switch the camera priority
-        var temp = currentCamera.Priority;
-        currentCamera.Priority = otherCamera.Priority;
-        otherCamera.Priority = temp;
+        (currentCamera.Priority, otherCamera.Priority) = (otherCamera.Priority, currentCamera.Priority);
     }
    
 }

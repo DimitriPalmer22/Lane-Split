@@ -7,8 +7,6 @@ public class PlayerVFX : MonoBehaviour
 {
     #region Serialized Fields
 
-    [SerializeField] private Volume volume;
-
     [Header("Boost Ready Chromatic Aberration")] [SerializeField] [Min(0)]
     private float maxBoostChromaticAberration = 0.5f;
 
@@ -37,35 +35,41 @@ public class PlayerVFX : MonoBehaviour
 
     #endregion
 
+    #region Getters
+
+    private Volume Volume => VolumeManager.Instance.Volume;
+
+    #endregion
+
     private void Awake()
     {
         // Get the player
         _player = GetComponent<TestPlayerScript>();
+    }
 
+    private void Start()
+    {
         // Initialize the VFX components
         InitializeVFXComponents();
 
         // Set the current boost to the max boost
         boostVignetteTimer.SetActive(true);
         boostVignetteTimer.ForceComplete();
+
+        // Initialize the events
+        InitializeEvents();
     }
 
     private void InitializeVFXComponents()
     {
         // Get the chromatic aberration
-        volume.profile.TryGet(out _chromaticAberration);
+        Volume.profile.TryGet(out _chromaticAberration);
 
         // Get the vignette
-        volume.profile.TryGet(out _vignette);
+        Volume.profile.TryGet(out _vignette);
 
         // Get the lens distortion
-        volume.profile.TryGet(out _lensDistortion);
-    }
-
-    private void Start()
-    {
-        // Initialize the events
-        InitializeEvents();
+        Volume.profile.TryGet(out _lensDistortion);
     }
 
     private void InitializeEvents()
