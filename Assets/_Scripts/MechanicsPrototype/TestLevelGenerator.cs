@@ -24,9 +24,6 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [SerializeField] private GameObject[] laneObjects;
 
-    [Header("Materials")] [SerializeField] private Material laneMaterial;
-    [SerializeField] private Material obstacleMaterial;
-
     [Header("Vehicles")] [SerializeField] private SpawnWeight[] vehicles;
 
     #endregion
@@ -186,7 +183,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
                 }
 
                 // Initialize the lane script with the obstacle value
-                laneScript.Initialize(laneNumber, hasObstacle[laneNumber], obstacle, laneMaterial, obstacleMaterial);
+                laneScript.Initialize(laneNumber, hasObstacle[laneNumber], obstacle);
 
                 // Set the local position of the object
                 obj.transform.localPosition =

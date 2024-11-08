@@ -42,23 +42,19 @@ public class TestLaneScript : MonoBehaviour
 
 
     public void Initialize(
-        int laneNumber, bool obstacle, GameObject obstaclePrefab,
-        Material laneMaterial, Material obstacleMaterial
+        int laneNumber, bool obstacle, GameObject obstaclePrefab
     )
     {
         // Set the lane number
         _laneNumber = laneNumber;
 
-        // Set the material of the lane
-        GetComponent<Renderer>().material = laneMaterial;
-
         // Initialize the obstacle if there is one
         _hasObstacle = obstacle;
         if (obstacle)
-            InitializeObstacle(obstaclePrefab, obstacleMaterial);
+            InitializeObstacle(obstaclePrefab);
     }
 
-    private void InitializeObstacle(GameObject obstaclePrefab, Material obstacleMaterial)
+    private void InitializeObstacle(GameObject obstaclePrefab)
     {
         // Create the obstacle
         // var obstacle = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -66,9 +62,6 @@ public class TestLaneScript : MonoBehaviour
         obstacle.name += "Obstacle";
 
         obstacle.transform.localPosition = new Vector3(0, 1, 0);
-
-        // Set the material of the obstacle
-        // obstacle.GetComponent<Renderer>().material = obstacleMaterial;
 
         // // Add an obstacleScript to the obstacle
         // _obstacle = obstacle.AddComponent<ObstacleScript>();
