@@ -1,13 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class VehicleSelectManager : MonoBehaviour
 {
     // Array to hold vehicle prefabs
-    public GameObject[] vehiclePrefabs;
+    [SerializeField] private VehicleSelectionInfo[] vehiclePrefabs;
 
     // Reference to the current vehicle instance
     private GameObject _currentVehicleInstance;
@@ -15,41 +17,43 @@ public class VehicleSelectManager : MonoBehaviour
     // Variable to store the selected vehicle index
     private int _selectedVehicleIndex;
 
-    private MenuControls _controls;
-
-    // Input system controls
-    private void Awake()
-    {
-        _controls = new MenuControls();
-
-        _controls.Navigation.PreviousVehicle.performed += _ => SelectPreviousVehicle();
-        _controls.Navigation.NextVehicle.performed += _ => SelectNextVehicle();
-        _controls.Navigation.SelectVehicle.performed += _ => LoadSelectedVehicle();
-    }
-
-    private void OnEnable()
-    {
-        _controls.Navigation.Enable();
-    }
-
-    private void OnDisable()
-    {
-        _controls.Navigation.Disable();
-    }
 
     private void Start()
     {
+        // Input manager to subscribe to the swipe event
+        InputManager.Instance.OnSwipe += OnSwipeSelectVehicle;
+
         InstantiateSelectedVehicle();
+    }
+
+    private void OnSwipeSelectVehicle(Vector2 swipe, InputManager.SwipeDirection direction)
+    {
+        switch (direction)
+        {
+            case InputManager.SwipeDirection.Left:
+                SelectPreviousVehicle();
+                break;
+
+            case InputManager.SwipeDirection.Right:
+                SelectNextVehicle();
+                break;
+
+            case InputManager.SwipeDirection.Up:
+                LoadSelectedVehicle();
+                break;
+        }
     }
 
     // Function to select the previous vehicle
     private void SelectPreviousVehicle()
     {
-        _selectedVehicleIndex--;
+        Debug.Log("Selecting previous vehicle");
+
+        // Cycle through the vehicles
+        _selectedVehicleIndex = (_selectedVehicleIndex - 1) % vehiclePrefabs.Length;
+
         if (_selectedVehicleIndex < 0)
-        {
-            _selectedVehicleIndex = vehiclePrefabs.Length - 1;
-        }
+            _selectedVehicleIndex += vehiclePrefabs.Length;
 
         InstantiateSelectedVehicle();
     }
@@ -57,11 +61,10 @@ public class VehicleSelectManager : MonoBehaviour
     // Function to select the next vehicle
     private void SelectNextVehicle()
     {
-        _selectedVehicleIndex++;
-        if (_selectedVehicleIndex > vehiclePrefabs.Length - 1)
-        {
-            _selectedVehicleIndex = 0;
-        }
+        Debug.Log("Selecting next vehicle");
+
+        // Cycle through the vehicles
+        _selectedVehicleIndex = (_selectedVehicleIndex + 1) % vehiclePrefabs.Length;
 
         InstantiateSelectedVehicle();
     }
@@ -71,12 +74,11 @@ public class VehicleSelectManager : MonoBehaviour
     {
         // Destroy the current vehicle instance if it exists
         if (_currentVehicleInstance != null)
-        {
             Destroy(_currentVehicleInstance);
-        }
 
         // Instantiate the selected vehicle prefab and store the instance
-        _currentVehicleInstance = Instantiate(vehiclePrefabs[_selectedVehicleIndex], transform.position, transform.rotation);
+        _currentVehicleInstance =
+            Instantiate(vehiclePrefabs[_selectedVehicleIndex].DisplayPrefab, transform.position, transform.rotation);
     }
 
     // Function to load the selected vehicle
@@ -84,5 +86,15 @@ public class VehicleSelectManager : MonoBehaviour
     {
         // Load the selected vehicle scene
         SceneManager.LoadScene("DimitriScene " + _selectedVehicleIndex);
+    }
+
+    [Serializable]
+    private class VehicleSelectionInfo
+    {
+        [SerializeField] private GameObject displayPrefab;
+        [SerializeField] private GameObject gameVehiclePrefab;
+
+        public GameObject DisplayPrefab => displayPrefab;
+        public GameObject GameVehiclePrefab => gameVehiclePrefab;
     }
 }
