@@ -22,7 +22,11 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
 
     [SerializeField] [Range(0, 1)] private float obstacleChance = 0.25f;
 
-    [SerializeField] private GameObject[] laneObjects;
+    [Header("Lanes")] [SerializeField] [Range(0, 1)]
+    private float specialLaneChance = 0.25f;
+
+    [SerializeField] private SpawnWeight[] normalLaneObjects;
+    [SerializeField] private SpawnWeight[] specialLaneObjects;
 
     [Header("Vehicles")] [SerializeField] private SpawnWeight[] vehicles;
 
@@ -47,6 +51,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     private float _spawnedLaneObjectDistance;
 
     private readonly Queue<LaneBoundsHelper> _despawnLaneObjects = new Queue<LaneBoundsHelper>();
+
+    private bool _previousLaneSpecial = true;
 
     #endregion
 
@@ -232,10 +238,40 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         if (_distanceTravelled < _spawnedLaneObjectDistance - lanesSpawnDistance)
             return;
 
-        // Get a random lane from the lane objects
-        var lane = laneObjects[UnityEngine.Random.Range(0, laneObjects.Length)];
+        // Randomly select to do a normal or special lane
+        // Ensure that two special lanes are not spawned in a row
+        var specialLane = UnityEngine.Random.value < specialLaneChance && !_previousLaneSpecial;
 
-        SpawnLaneObject(lane);
+        var laneArr = specialLane ? specialLaneObjects : normalLaneObjects;
+
+        // Get the total spawn weight
+        var totalWeight = laneArr.Sum(n => n.Weight);
+
+        // Get a random value between 0 and the total weight
+        var randomValue = UnityEngine.Random.Range(0, totalWeight);
+
+        // Loop through each vehicle to get the selected vehicle
+        int laneIndex;
+        for (laneIndex = 0; laneIndex < laneArr.Length; laneIndex++)
+        {
+            // Subtract the weight of the current vehicle from the random value
+            randomValue -= laneArr[laneIndex].Weight;
+
+            // If the random value is less than 0, select the current
+            if (randomValue <= 0)
+                break;
+        }
+
+        // Clamp the vehicle index to the length of the laneArr array
+        laneIndex = Mathf.Clamp(laneIndex, 0, laneArr.Length - 1);
+
+        // Set the obstacle to the selected lane
+        var lane = laneArr[laneIndex];
+
+        // Set the previous lane special flag
+        _previousLaneSpecial = specialLane;
+
+        SpawnLaneObject(lane.Prefab);
     }
 
     private void SpawnLaneObject(GameObject prefab)
@@ -250,7 +286,8 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         }
 
         // Offset the lane object based on its helper script
-        newLaneObject.transform.position = new Vector3(0, -boundsHelper.YOffset, -boundsHelper.StartZ + _spawnedLaneObjectDistance);
+        newLaneObject.transform.position =
+            new Vector3(0, -boundsHelper.YOffset, -boundsHelper.StartZ + _spawnedLaneObjectDistance);
 
         // Set the current lane object
         _currentLaneObject = boundsHelper;
@@ -265,10 +302,10 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
     private void SpawnLaneObjectBeforeStart()
     {
         // Get a random lane from the lane objects
-        var lane = laneObjects[UnityEngine.Random.Range(0, laneObjects.Length)];
+        var lane = normalLaneObjects[UnityEngine.Random.Range(0, normalLaneObjects.Length)];
 
         // Get the lane bounds helper from the lane object
-        if (!lane.TryGetComponent(out LaneBoundsHelper boundsHelper))
+        if (!lane.Prefab.TryGetComponent(out LaneBoundsHelper boundsHelper))
         {
             Debug.LogError($"{lane} DOES NOT HAVE LANE BOUNDS HELPER");
             return;
@@ -278,7 +315,7 @@ public class TestLevelGenerator : MonoBehaviour, IDebugManaged
         _spawnedLaneObjectDistance -= boundsHelper.TotalLength;
 
         // Spawn the lane object at the current position
-        SpawnLaneObject(lane);
+        SpawnLaneObject(lane.Prefab);
     }
 
     private void DespawnLaneObjects()
