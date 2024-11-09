@@ -305,7 +305,7 @@ MonoBehaviour:
     volume: 0.75
   laneChangeSound:
     clip: {fileID: 8300000, guid: 4652a8a79b701274882b4c24da0140f2, type: 3}
-    volume: 0.1
+    volume: 0.05
   nearMissSound:
     clip: {fileID: 8300000, guid: fdedea47a8523ba4bb7cc1541454b6d4, type: 3}
     volume: 0.2

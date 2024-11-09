@@ -59,7 +59,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     public event Action<TestPlayerScript> OnBoostEnd;
 
-    public event Action OnRampStart;
 
     public event Action<TestPlayerScript, ObstacleScript> OnNearMiss;
 
@@ -90,6 +89,8 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     private float BoostRechargeRate => maxBoost / boostRechargeDuration;
     private float BoostDepleteRate => maxBoost / boostDepleteDuration;
+
+    public CarRampHandler CarRampHandler => carRampHandler;
 
     #endregion
 
@@ -298,12 +299,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
     #endregion
 
-    // Trigger the ramp start event when the player enters the ramp
-    public void TriggerRampStart()
-    {
-        OnRampStart?.Invoke();
-    }
-
     #region Input Functions
 
     private void MoveOnSwipe(Vector2 swipe, InputManager.SwipeDirection direction)
@@ -468,7 +463,6 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             rb.AddForce(launchAngle * boostLaunchForce, ForceMode.Impulse);
         }
     }
-
 
     #region Event Functions
 

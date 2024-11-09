@@ -24,7 +24,7 @@ public class PlayerSFX : MonoBehaviour
     private void Start()
     {
         // Subscribe to the events
-        _player.OnRampStart += () => PlaySound(rampSound);
+        _player.CarRampHandler.OnRampEnter += () => PlaySound(rampSound);
         _player.OnLaneChangeStart += _ => PlaySound(laneChangeSound);
         _player.OnNearMiss += (_, _) => PlaySound(nearMissSound);
         _player.OnBoostReady += _ => PlaySound(boostReadySound);
