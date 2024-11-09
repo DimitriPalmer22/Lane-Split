@@ -160,7 +160,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         MovePlayer();
 
         //RotateWheels
-        RotateWheels();
+       // RotateWheels();
 
         // Update the position of the player
         SetLanePosition();

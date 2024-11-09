@@ -25,6 +25,7 @@ public class NewBehaviourScript : MonoBehaviour
     private bool _isTrailActive;
 
     private SkinnedMeshRenderer[] _skinnedMeshRenderers;
+    
 
     private readonly HashSet<GameObject> _spawnedObjects = new HashSet<GameObject>();
 
@@ -70,6 +71,7 @@ public class NewBehaviourScript : MonoBehaviour
 
         if (_skinnedMeshRenderers == null)
             _skinnedMeshRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+        
 
         foreach (var currentRenderer in _skinnedMeshRenderers)
         {
@@ -103,6 +105,7 @@ public class NewBehaviourScript : MonoBehaviour
             // Destroy the spawned object after a delay
             StartCoroutine(DestroySpawnedObject(gObj));
         }
+        
     }
 
     private IEnumerator DestroySpawnedObject(GameObject obj)
