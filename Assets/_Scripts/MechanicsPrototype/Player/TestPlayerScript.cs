@@ -133,6 +133,9 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             laneChangeTime.SetActive(false);
         };
 
+        // Force the lane position
+        OnLaneChangeEnd += _ => ForceLanePosition();
+
         // Clear the near missed obstacles on lane change end
         OnLaneChangeEnd += _ => _currentNearMissedObstacles.Clear();
     }
@@ -160,7 +163,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         MovePlayer();
 
         //RotateWheels
-       // RotateWheels();
+        // RotateWheels();
 
         // Update the position of the player
         SetLanePosition();
@@ -190,6 +193,14 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
 
         // Add the distance travelled to the level generator
         TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
+    }
+
+
+    private void ForceLanePosition()
+    {
+        // Set the x position of the player based on the lane
+        transform.position = TestLevelManager.Instance.GetLanePosition(_lane) +
+                             new Vector3(0, transform.position.y, transform.position.z);
     }
 
     // Rotate the wheels
