@@ -307,7 +307,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 4652a8a79b701274882b4c24da0140f2, type: 3}
     volume: 0.05
   nearMissSound:
-    clip: {fileID: 8300000, guid: fdedea47a8523ba4bb7cc1541454b6d4, type: 3}
+    clip: {fileID: 8300000, guid: 4982ac70073e215419f9b1f5c50c161f, type: 3}
     volume: 0.2
   boostReadySound:
     clip: {fileID: 8300000, guid: 94a4b41dca00f3d48b5d46bec39e85ff, type: 3}
