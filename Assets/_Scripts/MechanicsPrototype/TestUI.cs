@@ -27,6 +27,7 @@ public class TestUI : MonoBehaviour
     {
         // Disable the game over text
         gameOverText.gameObject.SetActive(false);
+        sparksText.gameObject.SetActive(false);
 
         // Disable the near miss text
         nearMissText.gameObject.SetActive(false);
@@ -124,8 +125,9 @@ public class TestUI : MonoBehaviour
 
         if (!LevelManager.Instance.Player.IsAlive)
             gameOverText.text = $"Game Over\n" +
-                                $"Score: {TestLevelManager.Instance.LevelGenerator.DistanceTravelled}\n" +
-                                $"Tap to restart";
+                                $"<size=50%>Score: {pointsInt}\n" +
+                                $"<size=50%>+{sparksInt} Sparks!\n" +
+                                $"<size=50%>Tap to restart";
     }
 
     private void UpdateBoostSlider()
@@ -145,7 +147,7 @@ public class TestUI : MonoBehaviour
 
     private void UpdateSparkCurrency()
     {
-        sparksText.text = $"Sparks: {sparksInt}";
+        sparksText.text = $"Sparks: +{sparksInt}!";
     }
 
 }
