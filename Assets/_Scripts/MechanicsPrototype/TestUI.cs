@@ -11,8 +11,16 @@ public class TestUI : MonoBehaviour
     [SerializeField] private TMP_Text boostReadyText;
     [SerializeField] private Slider boostSlider;
     [SerializeField] private TMP_Text nearMissText;
+    [SerializeField] private TMP_Text nearMissPointsText;
+    [SerializeField] private TMP_Text pointsText;
+    [SerializeField] private TMP_Text sparksText;
 
     private CountdownTimer _nearMissTimer = new CountdownTimer(.5f);
+
+    private float distance;
+    public int pointsInt;  // Made public for access from other scripts
+    private int sparksInt;
+    private int pointsFromNearMisses = 0;
 
     // Start is called before the first frame update
     private void Start()
@@ -22,16 +30,29 @@ public class TestUI : MonoBehaviour
 
         // Disable the near miss text
         nearMissText.gameObject.SetActive(false);
+        nearMissPointsText.gameObject.SetActive(false);
 
         LevelManager.Instance.Player.OnNearMiss += (_, _) =>
         {
+            var speed = TestLevelManager.Instance.MoveSpeed; // Get the current speed
+            int nearMissPoints = Mathf.FloorToInt(speed * 2); // Calculate points from speed
+
+            pointsFromNearMisses += nearMissPoints; // Add to total near miss points
+
+            nearMissPointsText.text = $"+{nearMissPoints}"; // Display the points gained
+
             nearMissText.gameObject.SetActive(true);
+            nearMissPointsText.gameObject.SetActive(true);
 
             _nearMissTimer.Reset();
             _nearMissTimer.Start();
         };
 
-        _nearMissTimer.OnTimerEnd += () => nearMissText.gameObject.SetActive(false);
+         _nearMissTimer.OnTimerEnd += () =>
+        {
+            nearMissText.gameObject.SetActive(false);
+            nearMissPointsText.gameObject.SetActive(false);
+        };
     }
 
     // Update is called once per frame
@@ -39,6 +60,9 @@ public class TestUI : MonoBehaviour
     {
         // Update the near miss timer
         _nearMissTimer.Update(Time.deltaTime);
+
+        // Compute distance, points, and sparks
+        UpdateMetrics();
 
         // Update the info text
         UpdateInfoText();
@@ -51,6 +75,29 @@ public class TestUI : MonoBehaviour
 
         // Update the boost slider
         UpdateBoostSlider();
+
+        // Update the points text
+        UpdatePointsText();
+
+        // Update the currency text
+        UpdateSparkCurrency();
+    }
+
+    private void UpdateMetrics()
+    {
+        // Compute distance
+        distance = TestLevelManager.Instance.LevelGenerator.DistanceTravelled;
+
+        // Compute points from distance
+        float pointsFromDistance = distance * 0.5f;
+        int pointsFromDistanceInt = Mathf.FloorToInt(pointsFromDistance);
+
+        // Total points is sum of distance points and near miss points
+        pointsInt = pointsFromDistanceInt + pointsFromNearMisses;
+
+        // Compute sparks based on total points
+        float sparks = pointsInt * 0.25f;
+        sparksInt = Mathf.FloorToInt(sparks);
     }
 
 
@@ -67,7 +114,6 @@ public class TestUI : MonoBehaviour
     private void UpdateInfoText()
     {
         var speed = TestLevelManager.Instance.MoveSpeed;
-        var distance = TestLevelManager.Instance.LevelGenerator.DistanceTravelled;
 
         infoText.text = $"Distance: {distance:0.00}\nSpeed: {speed}";
     }
@@ -91,4 +137,15 @@ public class TestUI : MonoBehaviour
         // Set the value of the slider to the boost percentage
         boostSlider.value = LevelManager.Instance.Player.BoostPercentage;
     }
+
+    private void UpdatePointsText()
+    {
+        pointsText.text = $"Points: {pointsInt}";
+    }
+
+    private void UpdateSparkCurrency()
+    {
+        sparksText.text = $"Sparks: {sparksInt}";
+    }
+
 }
