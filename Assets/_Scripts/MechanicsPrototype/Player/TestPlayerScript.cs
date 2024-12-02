@@ -181,54 +181,66 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
         if (!_isAlive)
             return;
 
-        if (carRampHandler.IsOnRamp)
-        {
-            // Update ramp timer
-            carRampHandler.UpdateRampTimer(Time.deltaTime);
+        var moveAmount = _currentMoveSpeed * Time.deltaTime;
 
-            // Handle movement along the ramp
-            HandleRampMovement();
+        // Move the player forward
+        transform.position += transform.forward * moveAmount;
+
+        // Handle jumping if the car is jumping
+        if (carRampHandler.IsJumping)
+        {
+            // Update the jump timer
+            carRampHandler.UpdateJumpTimer(Time.deltaTime);
+            
+            // Get the vertical offset
+            float verticalOffset = carRampHandler.GetVerticalOffset();
+
+            // Update the player's Y position
+            Vector3 position = transform.position;
+            position.y = verticalOffset; // Assumes ground level is y = 0
+            transform.position = position;
         }
         else
         {
-            // Regular forward movement
-            var moveAmount = CurrentMoveSpeed * Time.deltaTime;
-            transform.position += transform.forward * moveAmount;
-
-            // Add the distance travelled to the level generator
-            TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
+            // Ensure the player's Y position is at ground level when not jumping
+            Vector3 position = transform.position;
+            position.y = 0f; // Adjust based on your ground level
+            transform.position = position;
         }
-    }
 
-    private void HandleRampMovement()
-    {
-        // Get data from CarRampHandler
-        float rampTimer = carRampHandler.RampTimer;
-        float acceleration = carRampHandler.Acceleration;
-        float initialVelocity = carRampHandler.InitialVelocity;
-        Vector3 rampDirection = carRampHandler.RampDirection;
-        Vector3 startPosition = carRampHandler.StartPosition;
-
-        // Calculate distance along the ramp
-        float distanceAlongRamp = initialVelocity * rampTimer + 0.5f * acceleration * rampTimer * rampTimer;
-
-        // Calculate new position
-        Vector3 newPosition = startPosition + rampDirection.normalized * distanceAlongRamp;
-
-        // Calculate movement amount
-        float moveAmount = (newPosition - transform.position).magnitude;
-
-        // Update player's position
-        transform.position = newPosition;
-
-        // Optionally adjust rotation to match the incline
-        Quaternion targetRotation = Quaternion.LookRotation(rampDirection, Vector3.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
-
-        // Add the distance travelled to the level generator
         TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
     }
+    
 
+    // private void HandleRampMovement()
+    // {
+    //     // Get data from CarRampHandler
+    //     float rampTimer = carRampHandler.RampTimer;
+    //     float acceleration = carRampHandler.Acceleration;
+    //     float initialVelocity = carRampHandler.InitialVelocity;
+    //     Vector3 rampDirection = carRampHandler.RampDirection;
+    //     Vector3 startPosition = carRampHandler.StartPosition;
+    //
+    //     // Calculate distance along the ramp
+    //     float distanceAlongRamp = initialVelocity * rampTimer + 0.5f * acceleration * rampTimer * rampTimer;
+    //
+    //     // Calculate new position
+    //     Vector3 newPosition = startPosition + rampDirection.normalized * distanceAlongRamp;
+    //
+    //     // Calculate movement amount
+    //     float moveAmount = (newPosition - transform.position).magnitude;
+    //
+    //     // Update player's position
+    //     transform.position = newPosition;
+    //
+    //     // Optionally adjust rotation to match the incline
+    //     Quaternion targetRotation = Quaternion.LookRotation(rampDirection, Vector3.up);
+    //     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+    //
+    //     // Add the distance travelled to the level generator
+    //     TestLevelManager.Instance.LevelGenerator.AddDistanceTravelled(moveAmount);
+    // }
+    //
 
 
     private void ForceLanePosition()
