@@ -48,7 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sfxSource: {fileID: 4312533871170197400}
   musicSource: {fileID: 7399871922405654099}
-  musicClips: []
+  musicClips:
+  - clip: {fileID: 8300000, guid: d6b87758d612aa740a8bcee67327a718, type: 3}
+    volume: 0.2
 --- !u!1 &2688954210515779814
 GameObject:
   m_ObjectHideFlags: 0
