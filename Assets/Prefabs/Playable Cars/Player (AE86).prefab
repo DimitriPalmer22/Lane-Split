@@ -445,6 +445,16 @@ PrefabInstance:
       propertyPath: meshSpawnOffset.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5273089539268193750, guid: 7b249ee8c27e8e24ea42c2e75f0d67a6,
+        type: 3}
+      propertyPath: forwardSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5273089539268193750, guid: 7b249ee8c27e8e24ea42c2e75f0d67a6,
+        type: 3}
+      propertyPath: initialSpeed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6651541235434177220, guid: 7b249ee8c27e8e24ea42c2e75f0d67a6,
         type: 3}
       propertyPath: m_Size.x

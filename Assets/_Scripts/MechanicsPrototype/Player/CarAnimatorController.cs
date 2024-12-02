@@ -23,7 +23,7 @@ public class CarAnimatorController : MonoBehaviour
     private void OnDisable()
     {
         //unsubscribe from the ramp enter event
-        carRampHandler.OnRampEnter -= OnRampEnter;
+       carRampHandler.OnRampEnter -= OnRampEnter;
     }
 
     private void OnRampEnter()
