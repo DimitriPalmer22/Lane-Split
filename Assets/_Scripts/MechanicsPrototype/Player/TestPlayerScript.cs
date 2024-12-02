@@ -476,7 +476,7 @@ public class TestPlayerScript : MonoBehaviour, IDebugManaged
             return;
 
         // Check if the player has collided with an obstacle, if so kill the player
-        if (!other.CompareTag("Obstacle"))
+        if (!other.CompareTag("Obstacle") && !other.CompareTag("Ramp"))
             return;
 
         Debug.Log($"Player collided with: {other.name} ({other.tag})");

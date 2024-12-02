@@ -58,6 +58,8 @@ public class CarRampHandler : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        return;
+
         if (!other.CompareTag("Ramp"))
             return;
 
@@ -110,18 +112,16 @@ public class CarRampHandler : MonoBehaviour
 
         // Prevent overshooting the ramp length
         if (_distanceAlongRamp > rampLength)
-        {
             _distanceAlongRamp = rampLength;
-        }
 
         // Calculate new position
-        Vector3 newPosition = _startPosition + _rampDirection.normalized * _distanceAlongRamp;
+        var newPosition = _startPosition + _rampDirection.normalized * _distanceAlongRamp;
 
         // Update the car's position
         transform.position = newPosition;
 
         // Optionally adjust rotation to match the incline
-        Quaternion targetRotation = Quaternion.LookRotation(_rampDirection, Vector3.up);
+        var targetRotation = Quaternion.LookRotation(_rampDirection, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
 
         // Check if the car has reached the end of the ramp
@@ -136,7 +136,7 @@ public class CarRampHandler : MonoBehaviour
     private Vector3 _airVelocity;
     private float _airTime;
 
-// In EndRampMovement()
+    // In EndRampMovement()
     private void EndRampMovement()
     {
         _isOnRamp = false;
@@ -167,22 +167,13 @@ public class CarRampHandler : MonoBehaviour
         OnRampExit?.Invoke();
     }
 
-// In Update()
+    // In Update()
     private void Update()
     {
         if (_isOnRamp)
-        {
             HandleRampMovement();
-        }
         else if (_isInAir)
-        {
             HandleAirMovement();
-        }
-        else
-        {
-            // Regular forward movement
-            transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
-        }
     }
 
     private void HandleAirMovement()
@@ -190,7 +181,7 @@ public class CarRampHandler : MonoBehaviour
         _airTime += Time.deltaTime;
 
         // Update position
-        Vector3 displacement = _airVelocity * _airTime + 0.5f * Vector3.down * _gravity * _airTime * _airTime;
+        var displacement = _airVelocity * _airTime + 0.5f * Vector3.down * _gravity * _airTime * _airTime;
         transform.position = _airStartPosition + displacement;
 
         // Check for landing (e.g., when y <= ground level)
