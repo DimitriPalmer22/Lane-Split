@@ -16,13 +16,49 @@ public class LevelManager : MonoBehaviour
     {
         // Update the instance
         Instance = this;
+        // Retrieve the player car prefab and selected material from the GameManager
+        GameObject playerCarPrefab = GameManager.Instance.GetPlayerCarPrefab();
+        Material selectedMaterial = GameManager.Instance.GetVehicleMaterials();
 
-        // Instantiate the player prefab from the game manager
-        Instantiate(GameManager.Instance.PlayerCarPrefab);
+        if (playerCarPrefab != null)
+        {
+            // Instantiate the player car
+            GameObject playerCar = Instantiate(playerCarPrefab);
+
+            // Apply the selected material
+            if (selectedMaterial != null)
+            {
+                // Get all renderers from the instantiated vehicle
+                Renderer[] renderers = playerCar.GetComponentsInChildren<Renderer>();
+
+                foreach (Renderer renderer in renderers)
+                {
+                    //skip TrailRenderer
+                    if(renderer is TrailRenderer)
+                    {
+                        continue;
+                    }
+                    renderer.material = selectedMaterial;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Selected material is null.");
+            }
+        }
+        else
+        {
+            Debug.LogError("Player car prefab is null.");
+        }
     }
+      
+        
+        // Instantiate the player prefab from the game manager
+       // Instantiate(GameManager.Instance.PlayerCarPrefab);
 
     private void Start()
     {
+        
         // Initialize the input
         InitializeInput();
     }

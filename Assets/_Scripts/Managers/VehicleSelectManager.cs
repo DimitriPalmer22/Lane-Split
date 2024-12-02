@@ -141,8 +141,10 @@ public class VehicleSelectManager : MonoBehaviour
     // Function to load the selected vehicle
     private void LoadSelectedVehicle()
     {
+        var selectedVehicleInfo = vehiclePrefabs[_selectedVehicleIndex];
         // Set the player car prefab in the game manager
-        GameManager.Instance.SetPlayerCarPrefab(vehiclePrefabs[_selectedVehicleIndex].GameVehiclePrefab);
+        GameManager.Instance.SetPlayerCarPrefab(selectedVehicleInfo.GameVehiclePrefab,
+            selectedVehicleInfo.VehicleMaterials, _currentMaterialIndex);
 
         // Load the selected vehicle scene
         SceneManager.LoadScene("DimitriScene");
